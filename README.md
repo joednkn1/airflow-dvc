@@ -10,11 +10,11 @@ The examples are provided in the `dags/` directory.
 ## Usage
 
 The package provides the following core features:
-* DVCUpdateOperator (for uploading data to DVC)
-* DVCDownloadOperator (for downloading data from DVC)
-* DVCUpdateSensor (for waiting for a file modification on DVC)
+* [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_update_operator.py) (for uploading data to DVC)
+* [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_download_operator.py) (for downloading data from DVC)
+* [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_update_sensor.py) (for waiting for a file modification on DVC)
 
-### DVCUpdateOperator (Uploading)
+### 💾 DVCUpdateOperator (Uploading)
 
 The upload operator supports various types of data inputs that you can feed into it.
 
@@ -245,7 +245,7 @@ with DAG('intermediary_data_storage_dag',
     process_data >> upload_to_dvc
 ```
 
-### DVCDownloadOperator (Downloading)
+### ⬇️ DVCDownloadOperator (Downloading)
 
 We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The syntax is the same:
 ```python
@@ -263,7 +263,7 @@ We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The synta
 
 The `DVCDownload` implementations are similar to `DVCUpload`.
 
-### DVCSensor
+### 👀 DVCSensor
 
 `DVCSensor` will allow you to pause the DAG run until the specified file will be updated.
 The sensor checks the date of the latest DAG run and compares it with timestamp of meta DVC file in the repo.
