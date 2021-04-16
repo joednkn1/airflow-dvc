@@ -7,13 +7,13 @@ from git import Repo
 import os
 import shutil
 import tempfile
-import time
 import datetime
 import dvc.api as dvc_api
-from typing import Optional, List, Tuple, TextIO
+from typing import Optional, List
 from dataclasses import dataclass
 
 from airflow_dvc.dvc_upload import DVCUpload
+from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_cli import DVCLocalCli
 
 
@@ -140,6 +140,24 @@ class DVCClient:
         last_modification_date = datetime.datetime.fromtimestamp(commits[0].committed_date)
         temp_dir.cleanup()
         return last_modification_date
+
+    def download(
+        self,
+        downloaded_files: List[DVCDownload],
+    ):
+        """
+        Download files from the DVC.
+        For single-file access please see get(...) method.
+
+        :param downloaded_files: Files to be downloaded
+          (for more details see DVCDownload class)
+        """
+        if len(downloaded_files) == 0:
+            return
+
+        for downloaded_file in downloaded_files:
+            with self.get(downloaded_file.dvc_path) as data_input:
+                downloaded_file.write(data_input.read())
 
     def update(
         self,

@@ -9,43 +9,35 @@ from airflow.utils.decorators import apply_defaults
 from collections.abc import Callable
 
 from airflow_dvc.dvc_client import DVCClient
-from airflow_dvc.dvc_upload import DVCUpload
+from airflow_dvc.dvc_download import DVCDownload
 
-Uploads = Union[List[DVCUpload], Callable[any, List[DVCUpload]]]
+Downloads = Union[List[DVCDownload], Callable[any, List[DVCDownload]]]
 
 
-class DVCUpdateOperator(PythonOperator):
+class DVCDownloadOperator(PythonOperator):
     """
-    Operator that allows DAGs to update DVC files.
-    You can use it to upload various types of sources.
-    For more information please see DVCUpload abstract class.
+    Operator that downloads given DVC files.
     """
 
     dvc_repo: str # Clone URL for a GIT repo
-    files: Uploads # List of files to be uploaded or function that returns it
-    commit_message: Optional[str] # Optional Git custom commit message
-    temp_path: Optional[str] # Path to a temporary clone directory
+    files: Downloads # List of files to be downloaded or function that returns it
 
     @apply_defaults
     def __init__(
             self,
             dvc_repo: str,
-            files: Uploads,
-            commit_message: Optional[str] = None,
-            temp_path: Optional[str] = None,
+            files: Downloads,
             **kwargs
         ) -> None:
         """
-        Creates Airflow upload operator.
+        Creates Airflow download operator.
 
         :param dvc_repo: Git clone url for repo with configured DVC
-        :param files: Files to be uploaded (please see DVCUpload class for more details)
+        :param files: Files to be downloaded (please see DVCDownload class for more details)
         """
         super().__init__(**kwargs, python_callable=self._execute_operator)
         self.dvc_repo = dvc_repo
         self.files = files
-        self.commit_message = commit_message
-        self.temp_path = temp_path
 
     def _execute_operator(self, *args, **kwargs):
         """
@@ -55,8 +47,6 @@ class DVCUpdateOperator(PythonOperator):
         if callable(self.files):
             files = self.files(*args, **kwargs)
         dvc = DVCClient(self.dvc_repo)
-        dvc.update(
-            updated_files=files,
-            commit_message=self.commit_message,
-            temp_path=self.temp_path,
+        dvc.download(
+            downloaded_files=files,
         )

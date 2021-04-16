@@ -1,0 +1,92 @@
+"""
+Abstraction for DVC download targets.
+
+@Piotr Styczyński 2021
+"""
+from abc import ABCMeta, abstractmethod
+from collections.abc import Callable
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
+
+try:
+    from StringIO import StringIO ## for Python 2
+except ImportError:
+    from io import StringIO ## for Python 3
+
+
+class DVCDownload(metaclass=ABCMeta):
+    """
+    Base class for all DVC udownloads.
+    The DVCDownload corresponds to an abstract request to download a file from the upstream.
+    """
+    dvc_path: str # Path to he GIT repo that is an upstream target
+
+    def __init__(self, dvc_path: str):
+        self.dvc_path = dvc_path
+
+    @abstractmethod
+    def write(self, content: str):
+        """
+        Custom implementation of the download behaviour.
+        write() should write a data string to the target resource
+        """
+        raise Exception("Operation is not supported: write() invoked on abstract base class - DVCDownload")
+
+
+class DVCCallbackDownload(DVCDownload):
+    """
+    Download local file from DVC and run Python callback with the file content
+    """
+    callback: Callable[[str], None]
+
+    def __init__(self, dvc_path: str, callback: Callable[[str], None]):
+        super().__init__(dvc_path=dvc_path)
+        self.callback = callback
+
+    def write(self, content: str):
+        self.callback(content)
+
+
+class DVCPathDownload(DVCDownload):
+    """
+    Download local file from DVC and save it to the given path
+    """
+    # Path to the local file that will be written
+    src: str
+
+    def __init__(self, dvc_path: str, local_path: str):
+        super().__init__(dvc_path=dvc_path)
+        self.src = local_path
+
+    def write(self, content: str):
+        with open(self.src, 'w') as out:
+            out.write(content)
+
+
+class DVCS3Download(DVCDownload):
+    """
+    Download item from DVC and save it to S3
+    This is useful when you have S3Hook in your workflows used
+    as a temporary cache for files and you're not using shared-filesystem,
+    so using DVCPathDownload is not an option.
+    """
+    # Connection ID (the same as for Airflow S3Hook)
+    # For more details please see:
+    # - https://airflow.apache.org/docs/apache-airflow/1.10.14/_modules/airflow/hooks/S3_hook.html
+    # - https://www.programcreek.com/python/example/120741/airflow.hooks.S3_hook.S3Hook
+    aws_conn_id: str
+    # Bucket name (see above)
+    bucket_name: str
+    # Bucket path for the downloaded file (see above)
+    bucket_path: str
+
+    def __init__(self, dvc_path: str, aws_conn_id: str, bucket_name: str, bucket_path: str):
+        super().__init__(dvc_path=dvc_path)
+        self.aws_conn_id = aws_conn_id
+        self.bucket_name = bucket_name
+        self.bucket_path = bucket_path
+
+    def write(self, content: str):
+        # Open connection to the S3 and download the file
+        s3_hook = S3Hook(aws_conn_id=self.aws_conn_id)
+        s3_hook.load_string(content, self.bucket_path, bucket_name=self.bucket_name, replace=True)
+
