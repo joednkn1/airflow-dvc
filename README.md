@@ -1,5 +1,8 @@
 # Airflow DVC support
 
+
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
+
 ## Examples
 
 The examples are provided in the `dags/` directory.
