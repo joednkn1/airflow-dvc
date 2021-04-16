@@ -1,7 +1,9 @@
-# Airflow DVC support
+# Airflow DVC
 
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
+
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
 
 ## Examples
 
