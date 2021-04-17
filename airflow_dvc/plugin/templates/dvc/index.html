@@ -1,0 +1,77 @@
+{% extends "airflow/main.html" %}
+
+{% block content %}
+<!--
+https://pro.fontawesome.com/releases/v5.10.0/css/all.css
+-->
+<script type="text/javascript">
+(function(){
+    var link = document.createElement( "link" );
+    link.href = "https://pro.fontawesome.com/releases/v5.10.0/css/all.css";
+    link.type = "text/css";
+    link.rel = "stylesheet";
+
+    document.getElementsByTagName( "head" )[0].appendChild( link );
+})();
+</script>
+<div>
+    <ul class="list-group">
+    {% for target in targets_info %}
+       <li class="list-group-item">
+           {{ target.dvc_repo_owner }} / {{ target.dvc_repo_name }}
+           <div>
+               {% if target.download_connected %}
+                    <i class="fas fa-file-download"></i>
+               {% endif %}
+               {% if target.upload_connected %}
+                    <i class="fas fa-file-upload"></i>
+               {% endif %}
+               {% if target.sensors_connected %}
+                    <i class="fas fa-eye"></i>
+               {% endif %}
+           </div>
+
+           <!-- details -->
+           <ul class="list-group">
+            {% for operator in target.uploads %}
+               <li class="list-group-item">
+                   <i class="fas fa-file-upload"></i>
+                   Upload
+                   {% for description in operator.affected_files %}
+                      {{ description }}
+                   {% endfor %}
+               </li>
+            {% endfor %}
+            {% for operator in target.downloads %}
+               <li class="list-group-item">
+                   <i class="fas fa-file-download"></i>
+                   Download
+                   {% for description in operator.affected_files %}
+                      {{ description }}
+                   {% endfor %}
+               </li>
+            {% endfor %}
+            {% for operator in target.downloads %}
+               <li class="list-group-item">
+                   <i class="fas fa-file-download"></i>
+                   Download
+                   {% for description in operator.affected_files %}
+                      {{ description }}
+                   {% endfor %}
+               </li>
+            {% endfor %}
+            {% for operator in target.sensors %}
+               <li class="list-group-item">
+                   <i class="fas fa-eye"></i>
+                   Sensor {{ operator.instance_context }}
+                   {% for file in operator.files %}
+                      {{ file }}
+                   {% endfor %}
+               </li>
+            {% endfor %}
+            </ul>
+       </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

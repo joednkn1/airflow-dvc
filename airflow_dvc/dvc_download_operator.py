@@ -3,15 +3,14 @@ Airflow operator to upload files to DVC.
 
 @Piotr Styczyński 2021
 """
-from typing import Optional, List, Tuple, Union
-from airflow.models.python_operator import PythonOperator
+from typing import Optional, List, Tuple, Union, Callable
+from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
-from collections.abc import Callable
 
 from airflow_dvc.dvc_client import DVCClient
 from airflow_dvc.dvc_download import DVCDownload
 
-Downloads = Union[List[DVCDownload], Callable[any, List[DVCDownload]]]
+Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
 
 class DVCDownloadOperator(PythonOperator):
@@ -21,6 +20,12 @@ class DVCDownloadOperator(PythonOperator):
 
     dvc_repo: str # Clone URL for a GIT repo
     files: Downloads # List of files to be downloaded or function that returns it
+
+    @property
+    def affected_files(self) -> List[str]:
+        if callable(self.files):
+            return []
+        return [f'{upload.describe_target()} <= {upload.dvc_path}' for upload in self.files]
 
     @apply_defaults
     def __init__(

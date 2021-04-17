@@ -4,7 +4,8 @@ Abstraction for DVC download targets.
 @Piotr Styczyński 2021
 """
 from abc import ABCMeta, abstractmethod
-from collections.abc import Callable
+from typing import Callable
+import inspect
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 try:
@@ -19,9 +20,21 @@ class DVCDownload(metaclass=ABCMeta):
     The DVCDownload corresponds to an abstract request to download a file from the upstream.
     """
     dvc_path: str # Path to he GIT repo that is an upstream target
+    instance_context: str
 
     def __init__(self, dvc_path: str):
         self.dvc_path = dvc_path
+        curframe = inspect.currentframe()
+        caller = inspect.getouterframes(curframe, 2)[2]
+        caller_path = caller.filename.split("/")[-1]
+        self.instance_context = f"({caller_path}:{caller.lineno})"
+
+    @abstractmethod
+    def describe_target(self) -> str:
+        """
+        Human-readable message about the upload source
+        """
+        raise Exception("Operation is not supported: describe_target() invoked on abstract base class - DVCDownload")
 
     @abstractmethod
     def write(self, content: str):
@@ -42,6 +55,9 @@ class DVCCallbackDownload(DVCDownload):
         super().__init__(dvc_path=dvc_path)
         self.callback = callback
 
+    def describe_target(self) -> str:
+        return f"Callback {self.instance_context}"
+
     def write(self, content: str):
         self.callback(content)
 
@@ -56,6 +72,9 @@ class DVCPathDownload(DVCDownload):
     def __init__(self, dvc_path: str, local_path: str):
         super().__init__(dvc_path=dvc_path)
         self.src = local_path
+
+    def describe_target(self) -> str:
+        return f"Path {self.src}"
 
     def write(self, content: str):
         with open(self.src, 'w') as out:
@@ -84,6 +103,9 @@ class DVCS3Download(DVCDownload):
         self.aws_conn_id = aws_conn_id
         self.bucket_name = bucket_name
         self.bucket_path = bucket_path
+
+    def describe_target(self) -> str:
+        return f"S3 {self.bucket_name}/{self.bucket_path}"
 
     def write(self, content: str):
         # Open connection to the S3 and download the file

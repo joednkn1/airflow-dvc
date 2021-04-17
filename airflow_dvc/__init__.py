@@ -5,6 +5,7 @@ from .dvc_cli import DVCLocalCli
 from .dvc_client import DVCClient
 from .dvc_upload import DVCUpload, DVCStringUpload, DVCS3Upload, DVCPathUpload, DVCCallbackUpload
 from .dvc_download import DVCDownload, DVCPathDownload, DVCS3Download, DVCCallbackDownload
+from .plugin import DVCPlugin
 
 __all__ = [
     "DVCLocalCli",
@@ -21,4 +22,5 @@ __all__ = [
     "DVCPathDownload",
     "DVCS3Download",
     "DVCCallbackDownload",
+    "DVCPlugin",
 ]

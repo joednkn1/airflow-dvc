@@ -11,7 +11,7 @@ import threading
 import subprocess
 from dvc.main import main as call_dvc_main
 
-from collections.abc import Callable
+from typing import Callable, List, Optional
 
 
 def get_sys_exit_noop(original_callback: Callable[[int], None]) -> Callable[[int], None]:

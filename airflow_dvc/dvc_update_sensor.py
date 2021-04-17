@@ -8,6 +8,7 @@ from airflow.utils.decorators import apply_defaults
 from airflow.models.dagrun import DagRun
 from airflow.exceptions import AirflowException
 from typing import Optional, List, Tuple
+import inspect
 import datetime, time
 import logging
 
@@ -16,12 +17,13 @@ from airflow_dvc.dvc_client import DVCClient
 
 class DVCUpdateSensor(BaseSensorOperator):
     """
-    Snesor that waits until the given path will be updated in DVC.
+    Sensor that waits until the given path will be updated in DVC.
     """
 
     dag_name: str # Name of the running DAG (to compare DAG start and file timestamps)
     dvc_repo: str # Git repo clone url
-    files: List[Tuple[str, str]] # Files to watch for
+    files: List[str] # Files to watch for
+    instance_context: str
 
     @apply_defaults
     def __init__(
@@ -42,7 +44,13 @@ class DVCUpdateSensor(BaseSensorOperator):
         """
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
-        self.files = files,
+        self.files = files
+
+        curframe = inspect.currentframe()
+        caller = inspect.getouterframes(curframe, 2)[3]
+        caller_path = caller.filename.split("/")[-1]
+        self.instance_context = f"({caller_path}:{caller.lineno})"
+
         super(DVCUpdateSensor, self).__init__(*args, **kwargs)
 
     def poke(self, context):
