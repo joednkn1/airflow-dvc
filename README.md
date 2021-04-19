@@ -45,11 +45,11 @@ from airflow_dvc import DVCPlugin
 ```
 You will be able to access `Browse > DVC Operators` option in the Airflow menu.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="400px"/>
 
 The `DVC Operators` view allows you to display all configured DVC operators and repositories that they will push the files to/pull from.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen1.png?raw=true" width="800px"/>
 
 ### 💾 DVCUpdateOperator (Uploading)
 
