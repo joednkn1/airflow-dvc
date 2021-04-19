@@ -7,7 +7,7 @@ from typing import Optional, List, Tuple, Union, Callable
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
 
-from airflow_dvc.dvc_client import DVCClient
+from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_upload import DVCUpload
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
@@ -26,10 +26,10 @@ class DVCUpdateOperator(PythonOperator):
     temp_path: Optional[str] # Path to a temporary clone directory
 
     @property
-    def affected_files(self) -> List[str]:
+    def affected_files(self) -> List[DVCUpload]:
         if callable(self.files):
             return []
-        return [f'{upload.describe_source()} => {upload.dvc_path}' for upload in self.files]
+        return self.files
 
     @apply_defaults
     def __init__(
@@ -51,6 +51,9 @@ class DVCUpdateOperator(PythonOperator):
         self.files = files
         self.commit_message = commit_message
         self.temp_path = temp_path
+        if not callable(self.files):
+            for file in self.files:
+                file.dvc_repo = dvc_repo
 
     def _execute_operator(self, *args, **kwargs):
         """
@@ -59,7 +62,7 @@ class DVCUpdateOperator(PythonOperator):
         files = self.files
         if callable(self.files):
             files = self.files(*args, **kwargs)
-        dvc = DVCClient(self.dvc_repo)
+        dvc = DVCHook(self.dvc_repo)
         dvc.update(
             updated_files=files,
             commit_message=self.commit_message,

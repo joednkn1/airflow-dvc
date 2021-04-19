@@ -9,7 +9,12 @@ import io
 from io import StringIO
 import threading
 import subprocess
-from dvc.main import main as call_dvc_main
+
+try:
+    from dvc.main import main as call_dvc_main
+except:
+    call_dvc_main = None
+
 
 from typing import Callable, List, Optional
 
@@ -68,6 +73,9 @@ class DVCLocalCli:
 
         if path is None:
             path = self.working_path
+
+        if call_dvc_main is None:
+            use_shell = True
 
         if use_shell:
             cmd = " ".join(["dvc", *args])

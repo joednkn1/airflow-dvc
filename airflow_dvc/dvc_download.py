@@ -4,7 +4,7 @@ Abstraction for DVC download targets.
 @Piotr Styczyński 2021
 """
 from abc import ABCMeta, abstractmethod
-from typing import Callable
+from typing import Callable, Optional
 import inspect
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
@@ -19,6 +19,7 @@ class DVCDownload(metaclass=ABCMeta):
     Base class for all DVC udownloads.
     The DVCDownload corresponds to an abstract request to download a file from the upstream.
     """
+    dvc_repo: Optional[str] = None
     dvc_path: str # Path to he GIT repo that is an upstream target
     instance_context: str
 

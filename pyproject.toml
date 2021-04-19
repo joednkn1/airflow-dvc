@@ -9,7 +9,7 @@ python = "^3.8"
 #apache-airflow = "^2.0.1"
 SQLAlchemy = "<1.4.0"
 GitPython = "^3.1.14"
-dvc = {extras = ["s3"], version = "^2.0.17"}
+dvc = {version = "2.0.18", extras = ["s3"]}
 
 [tool.poetry.dev-dependencies]
 

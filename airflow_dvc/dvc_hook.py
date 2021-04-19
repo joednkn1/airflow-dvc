@@ -5,17 +5,22 @@ High-level DVC client for building aced workflows.
 """
 from git import Repo
 import os
+import io
 import shutil
 import tempfile
 import datetime
-import dvc.api as dvc_api
-from typing import Optional, List
+from typing import Optional, List, TextIO, Any
 from dataclasses import dataclass
+from airflow.hooks.base import BaseHook
 
 from airflow_dvc.dvc_upload import DVCUpload
 from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_cli import DVCLocalCli
 
+try:
+    from StringIO import StringIO ## for Python 2
+except ImportError:
+    from io import StringIO ## for Python 3
 
 @dataclass
 class ClonedRepo:
@@ -49,6 +54,23 @@ def clone_repo(
     repo = Repo.clone_from(dvc_repo, clone_path)
     dvc = DVCLocalCli(clone_path)
     return clone_path, temp_dir, repo, dvc
+
+
+try:
+    import dvc.api as dvc_api
+
+    def dvc_open(repo: str, path: str) -> TextIO:
+        return dvc_api.open(
+            path,
+            repo=repo,
+        )
+except ModuleNotFoundError:
+    def dvc_open(repo: str, path: str) -> TextIO:
+        clone_path, temp_dir, repo, dvc = clone_repo(repo)
+        temp_dir.cleanup()
+        with open(os.path.join(clone_path, path), 'r') as dvc_file:
+            input_stream = io.StringIO(dvc_file.read())
+        return input_stream
 
 
 def repo_add_dvc_files(repo: Repo, files: List[str]):
@@ -104,7 +126,7 @@ class DVCFile:
         self.descriptor = None
 
 
-class DVCClient:
+class DVCHook(BaseHook):
     """
     Interface for all high-level DVC operations.
     For low-level DVC operations please see DVCLocalCli class.
@@ -118,7 +140,11 @@ class DVCClient:
         """
         :param dvc_repo: Clone URL for the GIT repo that has DVC configured
         """
+        super().__init__()
         self.dvc_repo = dvc_repo
+
+    def get_conn(self) -> Any:
+        return self
 
     def modified_date(
         self,

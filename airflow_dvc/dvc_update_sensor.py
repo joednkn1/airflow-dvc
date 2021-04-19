@@ -12,7 +12,7 @@ import inspect
 import datetime, time
 import logging
 
-from airflow_dvc.dvc_client import DVCClient
+from airflow_dvc.dvc_hook import DVCHook
 
 
 class DVCUpdateSensor(BaseSensorOperator):
@@ -63,7 +63,7 @@ class DVCUpdateSensor(BaseSensorOperator):
         last_start_date = dag_runs[length-1].start_date.replace(tzinfo=None)
 
         update = False
-        dvc = DVCClient(self.dvc_repo)
+        dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
         for file in self.files:
             print(f"Current date = {last_start_date} vs. file modified date {dvc.modified_date(file)}")

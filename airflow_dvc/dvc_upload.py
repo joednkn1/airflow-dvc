@@ -4,7 +4,7 @@ Abstraction for DVC upload sources.
 @Piotr Styczyński 2021
 """
 from abc import ABCMeta, abstractmethod
-from typing import Callable
+from typing import Callable, Optional
 import inspect
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
@@ -19,6 +19,7 @@ class DVCUpload(metaclass=ABCMeta):
     Base class for all DVC uploads.
     The DVCUpload corresponds to an abstract request to upload a file to the upstream.
     """
+    dvc_repo: Optional[str] = None
     dvc_path: str # Path to he GIT repo that is an upstream target
     # Abstract resource that is created by __enter__ and destroyed with __exit__
     # All implementations of DVCUpload can freely choose what this resource is

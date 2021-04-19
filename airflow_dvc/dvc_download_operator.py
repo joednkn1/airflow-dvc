@@ -7,7 +7,7 @@ from typing import Optional, List, Tuple, Union, Callable
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
 
-from airflow_dvc.dvc_client import DVCClient
+from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_download import DVCDownload
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
@@ -22,10 +22,10 @@ class DVCDownloadOperator(PythonOperator):
     files: Downloads # List of files to be downloaded or function that returns it
 
     @property
-    def affected_files(self) -> List[str]:
+    def affected_files(self) -> List[DVCDownload]:
         if callable(self.files):
             return []
-        return [f'{upload.describe_target()} <= {upload.dvc_path}' for upload in self.files]
+        return self.files
 
     @apply_defaults
     def __init__(
@@ -43,6 +43,9 @@ class DVCDownloadOperator(PythonOperator):
         super().__init__(**kwargs, python_callable=self._execute_operator)
         self.dvc_repo = dvc_repo
         self.files = files
+        if not callable(self.files):
+            for file in self.files:
+                file.dvc_repo = dvc_repo
 
     def _execute_operator(self, *args, **kwargs):
         """
@@ -51,7 +54,7 @@ class DVCDownloadOperator(PythonOperator):
         files = self.files
         if callable(self.files):
             files = self.files(*args, **kwargs)
-        dvc = DVCClient(self.dvc_repo)
+        dvc = DVCHook(self.dvc_repo)
         dvc.download(
             downloaded_files=files,
         )
