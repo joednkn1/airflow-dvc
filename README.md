@@ -7,11 +7,11 @@ This is an [Airflow](https://airflow.apache.org/) extension that adds support fo
 ## What this package provides?
 
 The package provides the following core features:
-* 📊 DVC Operator view (tab to browse all configured DVC operators)
-* 💾 DVCUpdateOperator (for uploading data to DVC)
-* ⬇️ DVCDownloadOperator (for downloading data from DVC)
-* 👀 DVCUpdateSensor (for waiting for a file modification on DVC)
-* 🤖 DVCHook (high-level client for DVC)
+* 📊 [DVC Operator view](https://github.com/covid-genomics/airflow-dvc#-dvc-operator-view) (tab to browse all configured DVC operators)
+* 💾 [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc#-dvcupdateoperator-uploading) (for uploading data to DVC)
+* ⬇️ [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc#%EF%B8%8F-dvcdownloadoperator-downloading) (for downloading data from DVC)
+* 👀 [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc#-dvcsensor) (for waiting for a file modification on DVC)
+* 🤖 [DVCHook](https://github.com/covid-genomics/airflow-dvc#-dvchook) (high-level client for DVC)
 
 ## Run examples yourself
 
