@@ -1,4 +1,6 @@
-# Airflow DVC support
+# Airflow DVC
+
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
@@ -49,7 +51,7 @@ The `DVC Operators` view allows you to display all configured DVC operators and 
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
 
-### DVCUpdateOperator (Uploading)
+### 💾 DVCUpdateOperator (Uploading)
 
 The upload operator supports various types of data inputs that you can feed into it.
 
@@ -280,7 +282,7 @@ with DAG('intermediary_data_storage_dag',
     process_data >> upload_to_dvc
 ```
 
-### DVCDownloadOperator (Downloading)
+### ⬇️ DVCDownloadOperator (Downloading)
 
 We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The syntax is the same:
 ```python
@@ -298,7 +300,7 @@ We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The synta
 
 The `DVCDownload` implementations are similar to `DVCUpload`.
 
-### DVCSensor
+### 👀 DVCSensor
 
 `DVCSensor` will allow you to pause the DAG run until the specified file will be updated.
 The sensor checks the date of the latest DAG run and compares it with timestamp of meta DVC file in the repo.
@@ -337,7 +339,7 @@ with DAG('dvc_sensor_example', description='Another tutorial DAG',
 ### DVCHook
 
 You can perform all the operation manually using DVCHook:
-```angular2html
+```python
 from airflow_dvc import DVCHook, DVCPathUpload
 
 hook = DVCHook("<REPO_URL>")
@@ -345,3 +347,4 @@ hook.update([
     DVCPathUpload("data/1.txt", "~/local_file_path.txt"),
 ])
 ```
+
