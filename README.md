@@ -7,11 +7,11 @@ This is an [Airflow](https://airflow.apache.org/) extension that adds support fo
 ## What this package provides?
 
 The package provides the following core features:
-* DVCUpdateOperator (for uploading data to DVC)
-* DVCDownloadOperator (for downloading data from DVC)
-* DVCUpdateSensor (for waiting for a file modification on DVC)
-* DVCHook (high-level client for DVC)
-* Custom view tab to browse all configured DVC operators
+* 📊 DVC Operator view (tab to browse all configured DVC operators)
+* 💾 DVCUpdateOperator (for uploading data to DVC)
+* ⬇️ DVCDownloadOperator (for downloading data from DVC)
+* 👀 DVCUpdateSensor (for waiting for a file modification on DVC)
+* 🤖 DVCHook (high-level client for DVC)
 
 ## Run examples yourself
 
@@ -36,7 +36,7 @@ Please do the following to setup quick Airflow demo:
 
 ## Usage
 
-### DVC Operator view
+### 📊 DVC Operator view
 
 If you add `dvc.py` file to the `$AIRFLOW_HOME/plugins/dvc.py` with the following content (please see `example/plugsin/dvc.py`):
 ```python
@@ -336,7 +336,7 @@ with DAG('dvc_sensor_example', description='Another tutorial DAG',
 
 ```
 
-### DVCHook
+### 🤖 DVCHook
 
 You can perform all the operation manually using DVCHook:
 ```python
