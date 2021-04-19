@@ -1,20 +1,55 @@
 # Airflow DVC
 
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
-This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
+## What this package provides?
 
-## Examples
+The package provides the following core features:
+* DVCUpdateOperator (for uploading data to DVC)
+* DVCDownloadOperator (for downloading data from DVC)
+* DVCUpdateSensor (for waiting for a file modification on DVC)
+* DVCHook (high-level client for DVC)
+* Custom view tab to browse all configured DVC operators
 
-The examples are provided in the `dags/` directory.
+## Run examples yourself
+
+The examples are provided in the `example/` directory.
+Please do the following to setup quick Airflow demo:
+```bash
+  $ python3 -m pip install apache-airflow
+  $ python3 -m pip install --requirement <(poetry export --dev --format requirements.txt)
+  $ python3 -m pip install --no-deps .
+  $ python3 -m pip install apache-airflow-providers-amazon
+  # Please enter your repository checkout URL
+  # You may need to speify Personal Access Token together with the URL
+  $ export REPO="https://GITHUB_ACCESS_TOKEN@github.com/OWNER/REPO.git"
+  $ export AIRFLOW_HOME=$(pwd)/airflow
+  $ export AIRFLOW_CONFIG=$AIRFLOW_HOME/airflow.cfg
+  $ mkdir -p $AIRFLOW_HOME > /dev/null 2> /dev/null
+  $ airflow db init
+  $ cp -R example/. $AIRFLOW_HOME
+  # Run Airflow
+  $ airflow webserver --port 8080 & airflow scheduler 
+```
 
 ## Usage
 
-The package provides the following core features:
-* [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_update_operator.py) (for uploading data to DVC)
-* [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_download_operator.py) (for downloading data from DVC)
-* [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc/blob/master/airflow_dvc/dvc_update_sensor.py) (for waiting for a file modification on DVC)
+### DVC Operator view
+
+If you add `dvc.py` file to the `$AIRFLOW_HOME/plugins/dvc.py` with the following content (please see `example/plugsin/dvc.py`):
+```python
+# Load DVC plugin
+from airflow_dvc import DVCPlugin
+```
+You will be able to access `Browse > DVC Operators` option in the Airflow menu.
+
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
+
+The `DVC Operators` view allows you to display all configured DVC operators and repositories that they will push the files to/pull from.
+
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
 
 ### 💾 DVCUpdateOperator (Uploading)
 
@@ -300,3 +335,16 @@ with DAG('dvc_sensor_example', description='Another tutorial DAG',
     dummy_task >> sensor_task >> task
 
 ```
+
+### DVCHook
+
+You can perform all the operation manually using DVCHook:
+```python
+from airflow_dvc import DVCHook, DVCPathUpload
+
+hook = DVCHook("<REPO_URL>")
+hook.update([
+    DVCPathUpload("data/1.txt", "~/local_file_path.txt"),
+])
+```
+
