@@ -3,13 +3,9 @@ Airflow sensor to wait for DVC files changes.
 
 @Piotr Styczyński 2021
 """
-import datetime
 import inspect
-import logging
-import time
-from typing import List, Optional, Tuple
+from typing import List
 
-from airflow.exceptions import AirflowException
 from airflow.models.dagrun import DagRun
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults

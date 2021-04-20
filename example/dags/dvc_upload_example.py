@@ -4,19 +4,6 @@ Example usage of the DVC upload operator (uploading a string) in an advanced Air
 @Piotr Styczyński 2021
 """
 import os
-import sys
-
-sys.path.insert(
-    0,
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "../..",
-            "..",
-        )
-    ),
-)
-
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -29,10 +16,13 @@ from airflow_dvc import DVCStringUpload, DVCUpdateOperator
 
 def custom_python_task_handler(ts, **kwargs):
     print(
-        f"I am task number {kwargs['task_number']}. This DAG Run execution date is {ts} and the current time is {datetime.now()}"
+        f"I am task number {kwargs['task_number']}. "
+        f"This DAG Run execution date is {ts} and the "
+        f"current time is {datetime.now()}"
     )
     print(
-        "Here is the full DAG Run context. It is available because provide_context=True"
+        "Here is the full DAG Run context. It is available "
+        "because provide_context=True"
     )
     print(kwargs)
 

@@ -152,7 +152,7 @@ class AppBuilderDVCTargetsView(AppBuilderBaseView):
             )
 
         return self.render_template(
-            f"dvc/list.html",
+            "dvc/list.html",
             targets_info=targets_info,
             operator_type=operator_type,
             uploads_ref_files_count=uploads_ref_files_count,

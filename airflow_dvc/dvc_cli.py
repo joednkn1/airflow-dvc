@@ -12,7 +12,7 @@ from io import StringIO
 
 try:
     from dvc.main import main as call_dvc_main
-except:
+except ModuleNotFoundError:
     call_dvc_main = None
 
 

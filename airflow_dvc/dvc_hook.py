@@ -19,8 +19,10 @@ from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_upload import DVCUpload
 
 try:
+    # flake8: noqa
     from StringIO import StringIO  # # for Python 2
 except ImportError:
+    # flake8: noqa
     from io import StringIO  # # for Python 3
 
 
@@ -214,7 +216,8 @@ class DVCHook(BaseHook):
         By default the commit message is as follows:
            DVC Automatically updated files: <list of files specified>
 
-        :param updated_files: List of files to be uploaded as DVCUpload objects (please see DVCUpload class for more details)
+        :param updated_files: List of files to be uploaded as DVCUpload objects
+          (please see DVCUpload class for more details)
         :param commit_message: Optional GIT commit message
         :param temp_path: Optional temporary clone path
         """

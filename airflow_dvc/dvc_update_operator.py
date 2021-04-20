@@ -3,7 +3,7 @@ Airflow operator to upload files to DVC.
 
 @Piotr Styczyński 2021
 """
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Union
 
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults

@@ -10,8 +10,10 @@ from typing import Callable, Optional
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 try:
+    # flake8: noqa
     from StringIO import StringIO  # # for Python 2
 except ImportError:
+    # flake8: noqa
     from io import StringIO  # # for Python 3
 
 
