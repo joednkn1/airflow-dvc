@@ -33,14 +33,15 @@ class DVCCommit:
     """
     Information about the commit created by the DVC operators
     """
-    dvc_repo: str # DVC repo URL
-    dvc_repo_name: str # Same as above
-    message: str # Commit message
-    date: datetime.datetime # Commit time
-    dag: DAG # DAG that triggered this commit
-    files: List[str] # List of modified files
-    sha: str # Commit sha
-    commit_url: str # Commit URL
+
+    dvc_repo: str  # DVC repo URL
+    dvc_repo_name: str  # Same as above
+    message: str  # Commit message
+    date: datetime.datetime  # Commit time
+    dag: DAG  # DAG that triggered this commit
+    files: List[str]  # List of modified files
+    sha: str  # Commit sha
+    commit_url: str  # Commit URL
 
 
 @dataclass
