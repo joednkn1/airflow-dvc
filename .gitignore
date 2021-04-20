@@ -3,3 +3,4 @@ airflow/
 .idea/
 **/__pycache__/
 dist/
+publish.log
