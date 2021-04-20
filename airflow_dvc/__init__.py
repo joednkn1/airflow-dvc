@@ -1,10 +1,12 @@
-from .dvc_update_sensor import DVCUpdateSensor
-from .dvc_update_operator import DVCUpdateOperator
-from .dvc_download_operator import DVCDownloadOperator
 from .dvc_cli import DVCLocalCli
+from .dvc_download import (DVCCallbackDownload, DVCDownload, DVCPathDownload,
+                           DVCS3Download)
+from .dvc_download_operator import DVCDownloadOperator
 from .dvc_hook import DVCHook
-from .dvc_upload import DVCUpload, DVCStringUpload, DVCS3Upload, DVCPathUpload, DVCCallbackUpload
-from .dvc_download import DVCDownload, DVCPathDownload, DVCS3Download, DVCCallbackDownload
+from .dvc_update_operator import DVCUpdateOperator
+from .dvc_update_sensor import DVCUpdateSensor
+from .dvc_upload import (DVCCallbackUpload, DVCPathUpload, DVCS3Upload,
+                         DVCStringUpload, DVCUpload)
 from .plugin import DVCPlugin
 
 __all__ = [
@@ -24,3 +26,5 @@ __all__ = [
     "DVCCallbackDownload",
     "DVCPlugin",
 ]
+
+__version__ = "0.1.0"

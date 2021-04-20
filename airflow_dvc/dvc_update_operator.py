@@ -3,10 +3,10 @@ Airflow operator to upload files to DVC.
 
 @Piotr Styczyński 2021
 """
-from typing import Optional, List, Tuple, Union, Callable
+from typing import Callable, List, Optional, Union
+
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
-
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_upload import DVCUpload
 
@@ -20,10 +20,10 @@ class DVCUpdateOperator(PythonOperator):
     For more information please see DVCUpload abstract class.
     """
 
-    dvc_repo: str # Clone URL for a GIT repo
-    files: Uploads # List of files to be uploaded or function that returns it
-    commit_message: Optional[str] # Optional Git custom commit message
-    temp_path: Optional[str] # Path to a temporary clone directory
+    dvc_repo: str  # Clone URL for a GIT repo
+    files: Uploads  # List of files to be uploaded or function that returns it
+    commit_message: Optional[str]  # Optional Git custom commit message
+    temp_path: Optional[str]  # Path to a temporary clone directory
 
     @property
     def affected_files(self) -> List[DVCUpload]:
@@ -33,13 +33,13 @@ class DVCUpdateOperator(PythonOperator):
 
     @apply_defaults
     def __init__(
-            self,
-            dvc_repo: str,
-            files: Uploads,
-            commit_message: Optional[str] = None,
-            temp_path: Optional[str] = None,
-            **kwargs
-        ) -> None:
+        self,
+        dvc_repo: str,
+        files: Uploads,
+        commit_message: Optional[str] = None,
+        temp_path: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """
         Creates Airflow upload operator.
 

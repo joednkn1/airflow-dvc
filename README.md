@@ -1,4 +1,4 @@
-# Airflow DVC
+# Airflow DVC (0.1.0)
 
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
 
