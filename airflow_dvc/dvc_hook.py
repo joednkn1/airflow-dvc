@@ -9,7 +9,9 @@ import os
 import shutil
 import tempfile
 from dataclasses import dataclass
+from airflow.models.dagbag import DagBag
 from typing import Any, List, Optional, TextIO
+from airflow.models.dag import DAG
 
 from git import Repo
 
@@ -24,6 +26,18 @@ try:
 except ImportError:
     # flake8: noqa
     from io import StringIO  # # for Python 3
+
+
+@dataclass
+class DVCCommit:
+    dvc_repo: str
+    dvc_repo_name: str
+    message: str
+    date: datetime.datetime
+    dag: DAG
+    files: List[str]
+    sha: str
+    commit_url: str
 
 
 @dataclass
@@ -135,6 +149,7 @@ class DVCFile:
         self.descriptor = None
 
 
+
 class DVCHook(BaseHook):
     """
     Interface for all high-level DVC operations.
@@ -155,6 +170,35 @@ class DVCHook(BaseHook):
 
     def get_conn(self) -> Any:
         return self
+
+    def list_dag_commits(
+        self,
+        temp_path: Optional[str] = None,
+    ) -> List[DVCCommit]:
+        _, temp_dir, repo, _ = clone_repo(self.dvc_repo, temp_path)
+        commits = list(
+            repo.iter_commits(
+                max_count=100,
+            )
+        )
+
+        results: List[DVCCommit] = []
+        for commit in commits:
+            message_footer = commit.message.split("\n")[-1].split(" ")
+            if len(message_footer) == 2 and message_footer[0] == "dag:":
+                results.append(DVCCommit(
+                    dvc_repo=self.dvc_repo,
+                    dvc_repo_name=self.dvc_repo,
+                    files=[file_path.replace(".dvc", "") for file_path in commit.stats.files.keys() if ".dvc" in file_path],
+                    message="\n".join(commit.message.split("\n")[:-1]),
+                    date=datetime.datetime.fromtimestamp(
+                        commit.committed_date
+                    ),
+                    dag=[dag for dag in DagBag().dags.values() if dag.dag_id == message_footer[1]][0],
+                    sha=commit.hexsha,
+                    commit_url=f"{self.dvc_repo}/commits/{commit.hexsha}".replace(".git", ""),
+                ))
+        return results
 
     def modified_date(
         self,
@@ -205,6 +249,7 @@ class DVCHook(BaseHook):
     def update(
         self,
         updated_files: List[DVCUpload],
+        dag_id: str,
         commit_message: Optional[str] = None,
         temp_path: Optional[str] = None,
     ):
@@ -218,6 +263,7 @@ class DVCHook(BaseHook):
 
         :param updated_files: List of files to be uploaded as DVCUpload objects
           (please see DVCUpload class for more details)
+        :param dag_id: DAG ID
         :param commit_message: Optional GIT commit message
         :param temp_path: Optional temporary clone path
         """
@@ -231,6 +277,7 @@ class DVCHook(BaseHook):
             commit_message = (
                 f"DVC Automatically updated files: {file_list_str}"
             )
+        commit_message = f"{commit_message}\ndag: {dag_id}"
 
         print("Add files to DVC")
         clone_path, temp_dir, repo, dvc = clone_repo(self.dvc_repo, temp_path)
