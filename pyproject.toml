@@ -3,6 +3,7 @@ name = "airflow_dvc"
 version = "0.1.0"
 description = "DVC operator for Airflow"
 authors = ["Piotr Styczyński <piotrsty1@gmail.com>"]
+readme = "README.md"
 
 [tool.poetry.scripts]
 publish = 'publish:publish'
