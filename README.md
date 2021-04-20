@@ -35,20 +35,36 @@ The package provides the following core features:
 The examples are provided in the `example/` directory.
 Please do the following to setup quick Airflow demo:
 ```bash
-  $ python3 -m pip install apache-airflow
-  $ python3 -m pip install --requirement <(poetry export --dev --format requirements.txt)
-  $ python3 -m pip install --no-deps .
-  $ python3 -m pip install apache-airflow-providers-amazon
-  # Please enter your repository checkout URL
-  # You may need to speify Personal Access Token together with the URL
-  $ export REPO="https://GITHUB_ACCESS_TOKEN@github.com/OWNER/REPO.git"
+  # Your git repo clone URL
+  # Example:
+  #   REPO="https://GITHUB_PERSONAL_TOKEN@github.com/OWNER/REPO.git"
+  $ export REPO="<YOUR_REPO_URL>"
+
+  # Install Airflow with Poetry
+  $ mkdir airflow-dvc-test && cd airflow-dvc-test
+  $ poetry init
+  $ poetry add apache-airflow airflow-dvc
+  
+  # Configure Airflow paths
   $ export AIRFLOW_HOME=$(pwd)/airflow
   $ export AIRFLOW_CONFIG=$AIRFLOW_HOME/airflow.cfg
   $ mkdir -p $AIRFLOW_HOME > /dev/null 2> /dev/null
-  $ airflow db init
-  $ cp -R example/. $AIRFLOW_HOME
+  
+  # Init Airflow
+  $ poetry run airflow db init
+  $ poetry run airflow users create \
+      --username admin \
+      --firstname Peter \
+      --lastname Parker \
+      --role Admin \
+      --email spiderman@superhero.org
+  
+  # Create example DVC DAGs
+  $ poetry run airflow_dvc generate example_dags
+  
   # Run Airflow
-  $ airflow webserver --port 8080 & airflow scheduler 
+  $ poetry run airflow webserver --port 8080 &
+  $ poetry run airflow scheduler &
 ```
 
 ## Usage
