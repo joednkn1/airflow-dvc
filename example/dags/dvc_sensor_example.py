@@ -9,6 +9,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
+
 from airflow_dvc import DVCUpdateSensor
 
 with DAG(
