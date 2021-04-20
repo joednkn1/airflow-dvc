@@ -1,12 +1,12 @@
 # Imports
 from collections import defaultdict
-from .platforms import PLATFORMS, PLATFORMS_MAP
 
+from .platforms import PLATFORMS, PLATFORMS_MAP
 
 # Possible values to extract from a Git Url
 REQUIRED_ATTRIBUTES = (
-    'domain',
-    'repo',
+    "domain",
+    "repo",
 )
 
 
@@ -19,16 +19,15 @@ class GitUrlParsed(object):
             setattr(self, k, v)
 
     def _valid_attrs(self):
-        return all([
-            getattr(self, attr, None)
-            for attr in REQUIRED_ATTRIBUTES
-        ])
+        return all([getattr(self, attr, None) for attr in REQUIRED_ATTRIBUTES])
 
     @property
     def valid(self):
-        return all([
-            self._valid_attrs(),
-        ])
+        return all(
+            [
+                self._valid_attrs(),
+            ]
+        )
 
     @property
     def _platform_obj(self):
@@ -43,7 +42,7 @@ class GitUrlParsed(object):
 
     @property
     def user(self):
-        if hasattr(self, '_user'):
+        if hasattr(self, "_user"):
             return self._user
 
         return self.owner
@@ -66,19 +65,19 @@ class GitUrlParsed(object):
     ##
     @property
     def url2ssh(self):
-        return self.format('ssh')
+        return self.format("ssh")
 
     @property
     def url2http(self):
-        return self.format('http')
+        return self.format("http")
 
     @property
     def url2https(self):
-        return self.format('https')
+        return self.format("https")
 
     @property
     def url2git(self):
-        return self.format('git')
+        return self.format("git")
 
     # All supported Urls for a repo
     @property
@@ -93,23 +92,23 @@ class GitUrlParsed(object):
     ##
     @property
     def github(self):
-        return self.platform == 'github'
+        return self.platform == "github"
 
     @property
     def bitbucket(self):
-        return self.platform == 'bitbucket'
+        return self.platform == "bitbucket"
 
     @property
     def friendcode(self):
-        return self.platform == 'friendcode'
+        return self.platform == "friendcode"
 
     @property
     def assembla(self):
-        return self.platform == 'assembla'
+        return self.platform == "assembla"
 
     @property
     def gitlab(self):
-        return self.platform == 'gitlab'
+        return self.platform == "gitlab"
 
     ##
     # Get data as dict
@@ -118,23 +117,23 @@ class GitUrlParsed(object):
     def data(self):
         return dict(self._parsed)
 
-SUPPORTED_ATTRIBUTES = (
-    'domain',
-    'repo',
-    'owner',
-    '_user',
-    'port',
 
-    'url',
-    'platform',
-    'protocol',
+SUPPORTED_ATTRIBUTES = (
+    "domain",
+    "repo",
+    "owner",
+    "_user",
+    "port",
+    "url",
+    "platform",
+    "protocol",
 )
 
 
 def _parse(url, check_domain=True):
     # Values are None by default
     parsed_info = defaultdict(lambda: None)
-    parsed_info['port'] = ''
+    parsed_info["port"] = ""
 
     # Defaults to all attributes
     map(parsed_info.setdefault, SUPPORTED_ATTRIBUTES)
@@ -146,15 +145,15 @@ def _parse(url, check_domain=True):
 
             # Skip if not matched
             if not match:
-                #print("[%s] URL: %s dit not match %s" % (name, url, regex.pattern))
+                # print("[%s] URL: %s dit not match %s" % (name, url, regex.pattern))
                 continue
 
             # Skip if domain is bad
-            domain = match.group('domain')
-            #print('[%s] DOMAIN = %s' % (url, domain,))
+            domain = match.group("domain")
+            # print('[%s] DOMAIN = %s' % (url, domain,))
             if check_domain:
-                if platform.DOMAINS and not(domain in platform.DOMAINS):
-                    #print("domain: %s not in %s" % (domain, platform.DOMAINS))
+                if platform.DOMAINS and not (domain in platform.DOMAINS):
+                    # print("domain: %s not in %s" % (domain, platform.DOMAINS))
                     continue
 
             # Get matches as dictionary
@@ -167,11 +166,13 @@ def _parse(url, check_domain=True):
             parsed_info.update(platform.DEFAULTS)
 
             # Update info with platform info
-            parsed_info.update({
-                'url': url,
-                'platform': name,
-                'protocol': protocol,
-            })
+            parsed_info.update(
+                {
+                    "url": url,
+                    "platform": name,
+                    "protocol": protocol,
+                }
+            )
             return parsed_info
 
     # Empty if none matched

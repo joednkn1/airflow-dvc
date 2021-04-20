@@ -3,23 +3,25 @@ Interface to execute DVC commands.
 
 @Piotr Styczyński 2021
 """
-import sys
-import os
 import io
-from io import StringIO
-import threading
+import os
 import subprocess
+import sys
+import threading
+from io import StringIO
 
 try:
     from dvc.main import main as call_dvc_main
-except:
+except ModuleNotFoundError:
     call_dvc_main = None
 
 
 from typing import Callable, List, Optional
 
 
-def get_sys_exit_noop(original_callback: Callable[[int], None]) -> Callable[[int], None]:
+def get_sys_exit_noop(
+    original_callback: Callable[[int], None]
+) -> Callable[[int], None]:
     """
     Create fake handler for system exit to prevent command line from killing Python
     process by a mistake.
@@ -27,12 +29,16 @@ def get_sys_exit_noop(original_callback: Callable[[int], None]) -> Callable[[int
     :param original_callback: original sys.exit handler
     :returns: Dummy sys.exit handler
     """
+
     def sys_exit_noop(dumb_code=0):
         nonlocal original_callback
         if dumb_code != 0:
-            print('Invalid exit code was returned by the DVC. The program will be terminated.')
+            print(
+                "Invalid exit code was returned by the DVC. The program will be terminated."
+            )
             original_callback(dumb_code)
         return None
+
     return sys_exit_noop
 
 
@@ -40,6 +46,7 @@ class DVCLocalCli:
     """
     DVC low-level command interface.
     """
+
     working_path: str
 
     def __init__(self, path: str):
@@ -83,18 +90,20 @@ class DVCLocalCli:
             p = subprocess.Popen(cmd, shell=True, cwd=path)
             p.communicate()
             if p.returncode != 0:
-                raise Exception(
-                    "Error running DVC"
-                )
+                raise Exception("Error running DVC")
             return ""
         elif spawn_process:
             print("Spawn process (DVC)")
-            t = threading.Thread(target=self._execute_call, args=(args,), kwargs=dict(
-                path=path,
-                collect_output=collect_output,
-                input=input,
-                spawn_process=False,
-            ))
+            t = threading.Thread(
+                target=self._execute_call,
+                args=(args,),
+                kwargs=dict(
+                    path=path,
+                    collect_output=collect_output,
+                    input=input,
+                    spawn_process=False,
+                ),
+            )
             t.start()
             t.join()
             print("Process finished (DVC)")
@@ -104,7 +113,11 @@ class DVCLocalCli:
         os.chdir(path)
         call_args = args
         sys.argv = call_args
-        print('Running DVC command: {} (path: {})'.format(' '.join(sys.argv), path))
+        print(
+            "Running DVC command: {} (path: {})".format(
+                " ".join(sys.argv), path
+            )
+        )
 
         stdout = sys.stdout
         stdin = sys.stdin
