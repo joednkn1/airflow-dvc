@@ -26,3 +26,5 @@ __all__ = [
     "DVCCallbackDownload",
     "DVCPlugin",
 ]
+
+__version__ = "0.1.0"

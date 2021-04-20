@@ -1,4 +1,4 @@
-# Airflow DVC support
+# Airflow DVC (0.1.0)
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
