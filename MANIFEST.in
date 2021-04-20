@@ -1,0 +1,7 @@
+include README.md
+include example
+include example/dags
+include example/dags/dvc_sensor_example.py
+include example/dags/dvc_upload_example.py
+include example/plugins
+include example/plugins/dvc.py
