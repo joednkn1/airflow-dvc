@@ -5,6 +5,12 @@ description = "DVC operator for Airflow"
 authors = ["Piotr Styczyński <piotrsty1@gmail.com>"]
 readme = "README.md"
 include = [
+    { path = 'README.md', format = 'wheel' },
+    { path = 'README.md', format = 'sdist' },
+    { path = 'example/dags/*', format = 'wheel' },
+    { path = 'example/dags/*', format = 'sdist' },
+    { path = 'example/plugins/*', format = 'wheel' },
+    { path = 'example/plugins/*', format = 'sdist' },
     "README.md",
     "example",
     "example/dags",
@@ -91,5 +97,5 @@ pyflakes = ["+*", "-E203"]
 pylint = ["+*", "-E203"]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0a3"]
 build-backend = "poetry.core.masonry.api"
