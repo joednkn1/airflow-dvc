@@ -1,15 +1,17 @@
 # Airflow DVC (0.1.0)
 
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
+
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
 ## What this package provides?
 
 The package provides the following core features:
-* DVCUpdateOperator (for uploading data to DVC)
-* DVCDownloadOperator (for downloading data from DVC)
-* DVCUpdateSensor (for waiting for a file modification on DVC)
-* DVCHook (high-level client for DVC)
-* Custom view tab to browse all configured DVC operators
+* 📊 [DVC Operator view](https://github.com/covid-genomics/airflow-dvc#-dvc-operator-view) (tab to browse all configured DVC operators)
+* 💾 [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc#-dvcupdateoperator-uploading) (for uploading data to DVC)
+* ⬇️ [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc#%EF%B8%8F-dvcdownloadoperator-downloading) (for downloading data from DVC)
+* 👀 [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc#-dvcsensor) (for waiting for a file modification on DVC)
+* 🤖 [DVCHook](https://github.com/covid-genomics/airflow-dvc#-dvchook) (high-level client for DVC)
 
 ## Run examples yourself
 
@@ -34,7 +36,7 @@ Please do the following to setup quick Airflow demo:
 
 ## Usage
 
-### DVC Operator view
+### 📊 DVC Operator view
 
 If you add `dvc.py` file to the `$AIRFLOW_HOME/plugins/dvc.py` with the following content (please see `example/plugsin/dvc.py`):
 ```python
@@ -43,13 +45,13 @@ from airflow_dvc import DVCPlugin
 ```
 You will be able to access `Browse > DVC Operators` option in the Airflow menu.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="400px"/>
 
 The `DVC Operators` view allows you to display all configured DVC operators and repositories that they will push the files to/pull from.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="200px"/>
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen1.png?raw=true" width="800px"/>
 
-### DVCUpdateOperator (Uploading)
+### 💾 DVCUpdateOperator (Uploading)
 
 The upload operator supports various types of data inputs that you can feed into it.
 
@@ -280,7 +282,7 @@ with DAG('intermediary_data_storage_dag',
     process_data >> upload_to_dvc
 ```
 
-### DVCDownloadOperator (Downloading)
+### ⬇️ DVCDownloadOperator (Downloading)
 
 We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The syntax is the same:
 ```python
@@ -298,7 +300,7 @@ We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The synta
 
 The `DVCDownload` implementations are similar to `DVCUpload`.
 
-### DVCSensor
+### 👀 DVCSensor
 
 `DVCSensor` will allow you to pause the DAG run until the specified file will be updated.
 The sensor checks the date of the latest DAG run and compares it with timestamp of meta DVC file in the repo.
@@ -334,10 +336,10 @@ with DAG('dvc_sensor_example', description='Another tutorial DAG',
 
 ```
 
-### DVCHook
+### 🤖 DVCHook
 
 You can perform all the operation manually using DVCHook:
-```angular2html
+```python
 from airflow_dvc import DVCHook, DVCPathUpload
 
 hook = DVCHook("<REPO_URL>")
@@ -345,3 +347,4 @@ hook.update([
     DVCPathUpload("data/1.txt", "~/local_file_path.txt"),
 ])
 ```
+
