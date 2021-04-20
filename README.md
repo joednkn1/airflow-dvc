@@ -4,7 +4,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
 
 
-This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://airflow.apache.org/) operations.
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
@@ -71,18 +71,18 @@ Please do the following to setup quick Airflow demo:
 
 ### 📊 DVC Operator view
 
-If you add `dvc.py` file to the `$AIRFLOW_HOME/plugins/dvc.py` with the following content (please see `example/plugsin/dvc.py`):
-```python
-# Load DVC plugin
-from airflow_dvc import DVCPlugin
-```
-You will be able to access `Browse > DVC Operators` option in the Airflow menu.
+After installation, you should be able to access `Browse > DVC Operators` option in the Airflow menu.
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="400px"/>
 
 The `DVC Operators` view allows you to display all configured DVC operators and repositories that they will push the files to/pull from.
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen1.png?raw=true" width="800px"/>
+
+The `DVC Pushes` view allows you to display all commits created by the DVC operators among all repositories:
+
+<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen3.png?raw=true" width="800px"/>
+
 
 ### 💾 DVCUpdateOperator (Uploading)
 
@@ -376,9 +376,13 @@ You can perform all the operation manually using DVCHook:
 from airflow_dvc import DVCHook, DVCPathUpload
 
 hook = DVCHook("<REPO_URL>")
+
+# Hook requires dag_id so if we will run this code inside class extending any Operator
+# we will be able to access self.dag_id field
+# Dag IDs are used to track all pushes to your DVC repositories
 hook.update([
     DVCPathUpload("data/1.txt", "~/local_file_path.txt"),
-])
+], dag_id=self.dag_id)
 ```
 ## Development
 

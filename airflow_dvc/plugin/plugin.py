@@ -9,7 +9,7 @@ from flask_appbuilder import expose
 from airflow.models.dagbag import DagBag
 from airflow.plugins_manager import AirflowPlugin
 from airflow_dvc import (DVCDownloadOperator, DVCHook, DVCUpdateOperator,
-                         DVCUpdateSensor)
+                         DVCUpdateSensor, DVCCommit)
 
 from .git_url_parser import parse as parse_git_url
 
@@ -27,6 +27,40 @@ class DVCTargetInfo:
     uploads: List[DVCUpdateOperator]
     downloads: List[DVCDownloadOperator]
     sensors: List[DVCUpdateSensor]
+
+
+class AppBuilderDVCPushesView(AppBuilderBaseView):
+    @expose("/list", methods=["GET", "POST"])
+    def list(self):
+
+        operators: List[AnyDVCOperator] = []
+        for dag in DagBag().dags.values():
+            for task in dag.tasks:
+                if (
+                    isinstance(task, DVCDownloadOperator)
+                    or isinstance(task, DVCUpdateOperator)
+                    or isinstance(task, DVCUpdateSensor)
+                ):
+                    setattr(task, "dag", dag)
+                    operators.append(task)
+
+        repos: Dict[str, List[AnyDVCOperator]] = defaultdict(list)
+        for operator in operators:
+            repos[operator.dvc_repo].append(operator)
+
+        all_commits: List[DVCCommit] = []
+        for repo in repos.keys():
+            hook = DVCHook(repo)
+            all_commits += hook.list_dag_commits()
+        for commit in all_commits:
+            repo_url_info = parse_git_url(commit.dvc_repo)
+            target_name = f"{repo_url_info.owner}/{repo_url_info.repo}"
+            commit.dvc_repo_name = target_name
+
+        return self.render_template(
+            "dvc/pushes.html",
+            all_commits=all_commits,
+        )
 
 
 class AppBuilderDVCTargetsView(AppBuilderBaseView):
@@ -170,6 +204,13 @@ v_appbuilder_package = dict(
     view=v_appbuilder_view,
 )
 
+v_dvc_pushes = AppBuilderDVCPushesView()
+v_dvc_pushes_view = dict(
+    name="DVC Pushes",
+    category="Browse",
+    view=v_dvc_pushes,
+)
+
 dag_creation_manager_bp = Blueprint(
     "dag_creation_manager_bp",
     __name__,
@@ -187,6 +228,7 @@ class DVCPlugin(AirflowPlugin):
         []
     )  # if we dont have RBAC we use this view and can comment the next line
     appbuilder_views = [
-        v_appbuilder_package
+        v_appbuilder_package,
+        v_dvc_pushes_view,
     ]  # if we use RBAC we use this view and can comment the previous line
     hooks = [DVCHook]

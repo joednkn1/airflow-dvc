@@ -65,6 +65,7 @@ class DVCUpdateOperator(PythonOperator):
         dvc = DVCHook(self.dvc_repo)
         dvc.update(
             updated_files=files,
+            dag_id=self.dag_id,
             commit_message=self.commit_message,
             temp_path=self.temp_path,
         )
