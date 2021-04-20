@@ -4,6 +4,15 @@ version = "1.0.0-dev0"
 description = "DVC operator for Airflow"
 authors = ["Piotr Styczyński <piotrsty1@gmail.com>"]
 readme = "README.md"
+include = [
+    "README.md",
+    "example",
+    "example/dags",
+    "example/dags/dvc_sensor_example.py",
+    "example/dags/dvc_upload_example.py",
+    "example/plugins",
+    "example/plugins/dvc.py"
+]
 
 [tool.poetry.scripts]
 publish = 'publish:publish'

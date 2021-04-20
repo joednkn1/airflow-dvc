@@ -17,8 +17,8 @@ To install this package please do:
 
 Or if you are using [Poetry](https://python-poetry.org/) to run Apache Airflow:
 ```bash
-  $ poetry add apache-airflow>=2.0.0
-  $ poetry add airflow-dvc>=0.1.0
+  $ poetry add apache-airflow@latest
+  $ poetry add "airflow-dvc@1.0.0-dev0"
 ```
 
 ## What this package provides?
@@ -43,7 +43,7 @@ Please do the following to setup quick Airflow demo:
   # Install Airflow with Poetry
   $ mkdir airflow-dvc-test && cd airflow-dvc-test
   $ poetry init
-  $ poetry add apache-airflow airflow-dvc
+  $ poetry add apache-airflow "airflow-dvc@1.0.0-dev0"
   
   # Configure Airflow paths
   $ export AIRFLOW_HOME=$(pwd)/airflow
