@@ -8,6 +8,19 @@ This is an [Airflow](https://airflow.apache.org/) extension that adds support fo
 
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 
+## Installation
+
+To install this package please do:
+```bash
+  $ python3 -m pip install airflow-dvc>=0.1.0
+```
+
+Or if you are using [Poetry](https://python-poetry.org/) to run Apache Airflow:
+```bash
+  $ poetry add apache-airflow>=2.0.0
+  $ poetry add airflow-dvc>=0.1.0
+```
+
 ## What this package provides?
 
 The package provides the following core features:
