@@ -3,15 +3,16 @@ Airflow sensor to wait for DVC files changes.
 
 @Piotr Styczyński 2021
 """
+import datetime
+import inspect
+import logging
+import time
+from typing import List, Optional, Tuple
+
+from airflow.exceptions import AirflowException
+from airflow.models.dagrun import DagRun
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
-from airflow.models.dagrun import DagRun
-from airflow.exceptions import AirflowException
-from typing import Optional, List, Tuple
-import inspect
-import datetime, time
-import logging
-
 from airflow_dvc.dvc_hook import DVCHook
 
 
@@ -20,9 +21,9 @@ class DVCUpdateSensor(BaseSensorOperator):
     Sensor that waits until the given path will be updated in DVC.
     """
 
-    dag_name: str # Name of the running DAG (to compare DAG start and file timestamps)
-    dvc_repo: str # Git repo clone url
-    files: List[str] # Files to watch for
+    dag_name: str  # Name of the running DAG (to compare DAG start and file timestamps)
+    dvc_repo: str  # Git repo clone url
+    files: List[str]  # Files to watch for
     instance_context: str
 
     @apply_defaults
@@ -60,13 +61,15 @@ class DVCUpdateSensor(BaseSensorOperator):
         dag_runs = DagRun.find(dag_id=self.dag_name)
         length = len(dag_runs)
         # Query the latest start date of the DAG
-        last_start_date = dag_runs[length-1].start_date.replace(tzinfo=None)
+        last_start_date = dag_runs[length - 1].start_date.replace(tzinfo=None)
 
         update = False
         dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
         for file in self.files:
-            print(f"Current date = {last_start_date} vs. file modified date {dvc.modified_date(file)}")
+            print(
+                f"Current date = {last_start_date} vs. file modified date {dvc.modified_date(file)}"
+            )
             if dvc.modified_date(file) >= last_start_date:
                 update = True
                 break

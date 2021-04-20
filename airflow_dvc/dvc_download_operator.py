@@ -3,12 +3,12 @@ Airflow operator to upload files to DVC.
 
 @Piotr Styczyński 2021
 """
-from typing import Optional, List, Tuple, Union, Callable
+from typing import Callable, List, Optional, Tuple, Union
+
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
-
-from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_download import DVCDownload
+from airflow_dvc.dvc_hook import DVCHook
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
@@ -18,8 +18,8 @@ class DVCDownloadOperator(PythonOperator):
     Operator that downloads given DVC files.
     """
 
-    dvc_repo: str # Clone URL for a GIT repo
-    files: Downloads # List of files to be downloaded or function that returns it
+    dvc_repo: str  # Clone URL for a GIT repo
+    files: Downloads  # List of files to be downloaded or function that returns it
 
     @property
     def affected_files(self) -> List[DVCDownload]:
@@ -28,12 +28,7 @@ class DVCDownloadOperator(PythonOperator):
         return self.files
 
     @apply_defaults
-    def __init__(
-            self,
-            dvc_repo: str,
-            files: Downloads,
-            **kwargs
-        ) -> None:
+    def __init__(self, dvc_repo: str, files: Downloads, **kwargs) -> None:
         """
         Creates Airflow download operator.
 
