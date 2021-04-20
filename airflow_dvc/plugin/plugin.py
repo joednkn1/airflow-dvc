@@ -230,6 +230,7 @@ class DVCPlugin(AirflowPlugin):
     """
     DVC Airflow plugin
     """
+
     name = "dvc_plugin"
     flask_blueprints = [dag_creation_manager_bp]
     admin_views = (
