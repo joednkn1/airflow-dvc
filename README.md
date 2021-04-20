@@ -1,4 +1,4 @@
-# Airflow DVC (0.1.0)
+# Airflow DVC (1.0.0-dev0)
 
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
