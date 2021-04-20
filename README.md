@@ -12,7 +12,7 @@ This is an [Airflow](https://airflow.apache.org/) extension that adds support fo
 
 To install this package please do:
 ```bash
-  $ python3 -m pip install airflow-dvc>=0.1.0
+  $ python3 -m pip install "airflow-dvc==1.0.0"
 ```
 
 Or if you are using [Poetry](https://python-poetry.org/) to run Apache Airflow:
