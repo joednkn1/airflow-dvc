@@ -8,6 +8,7 @@ from .dvc_update_sensor import DVCUpdateSensor
 from .dvc_upload import (DVCCallbackUpload, DVCPathUpload, DVCS3Upload,
                          DVCStringUpload, DVCUpload)
 from .plugin import DVCPlugin
+from .cli.entrypoint import run_cli
 
 __all__ = [
     "DVCLocalCli",
@@ -25,6 +26,7 @@ __all__ = [
     "DVCS3Download",
     "DVCCallbackDownload",
     "DVCPlugin",
+    "run_cli",
 ]
 
 __version__ = "0.1.0"
