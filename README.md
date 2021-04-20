@@ -347,4 +347,28 @@ hook.update([
     DVCPathUpload("data/1.txt", "~/local_file_path.txt"),
 ])
 ```
+## Development
 
+Install the project with the following command:
+```python
+    $ poetry install
+```
+
+* You may want to run `poetry --version` to check if you have [Poetry](https://python-poetry.org/docs/) installed. If the command fails then proceed to install Poetry. The installer installs the poetry tool to Poetry's bin directory. On Unix it is located at `$HOME/.poetry/bin` and on Windows at `%USERPROFILE%\.poetry\bin`.
+This directory will be automatically added to your `$PATH` environment variable, by appending a statement to your `$HOME/.profile` configuration (or equivalent files). If you do not feel comfortable with this, please pass the --no-modify-path flag to the installer and manually add the Poetry's bin directory to your path.
+    * **Linux/Mac:** `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -`
+    * **Windows:** Type in Powershell: `(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python `
+* Install project with `poetry install`
+* You can now use virtual env created by poetry. Please type `poetry shell`
+
+### Code style
+
+The project has configured styles in `pyproject.toml`.
+To format it please call `make lint`.
+
+### Versioning
+
+To bump project version before release please use the following command (for developers):
+```bash
+    $ poetry run bump2version minor
+```
