@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "airflow_dvc"
-version = "1.0.0-dev0"
+version = "1.0.0"
 description = "DVC operator for Airflow"
 authors = ["Piotr Styczyński <piotrsty1@gmail.com>"]
 readme = "README.md"
