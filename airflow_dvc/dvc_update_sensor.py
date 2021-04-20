@@ -9,6 +9,7 @@ from typing import List
 from airflow.models.dagrun import DagRun
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
+
 from airflow_dvc.dvc_hook import DVCHook
 
 

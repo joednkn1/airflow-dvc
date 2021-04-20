@@ -1,6 +1,8 @@
 from pathlib import Path
-import airflow_dvc
+
 from poetry_publish.publish import poetry_publish
+
+import airflow_dvc
 
 
 def publish():
