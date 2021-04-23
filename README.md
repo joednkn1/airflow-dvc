@@ -1,4 +1,4 @@
-# Airflow DVC (1.1.1)
+# Airflow DVC (1.1.2)
 
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
@@ -12,13 +12,13 @@ This is an [Airflow](https://airflow.apache.org/) extension that adds support fo
 
 To install this package please do:
 ```bash
-  $ python3 -m pip install "airflow-dvc==1.1.1"
+  $ python3 -m pip install "airflow-dvc==1.1.2"
 ```
 
 Or if you are using [Poetry](https://python-poetry.org/) to run Apache Airflow:
 ```bash
   $ poetry add apache-airflow@latest
-  $ poetry add "airflow-dvc@1.1.1"
+  $ poetry add "airflow-dvc@1.1.2"
 ```
 
 ## What this package provides?
@@ -43,7 +43,7 @@ Please do the following to setup quick Airflow demo:
   # Install Airflow with Poetry
   $ mkdir airflow-dvc-test && cd airflow-dvc-test
   $ poetry init
-  $ poetry add apache-airflow "airflow-dvc@1.1.1"
+  $ poetry add apache-airflow "airflow-dvc@1.1.2"
   
   # Configure Airflow paths
   $ export AIRFLOW_HOME=$(pwd)/airflow
