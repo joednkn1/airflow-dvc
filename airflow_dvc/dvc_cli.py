@@ -159,7 +159,7 @@ class DVCLocalCli:
         """
         Pull DVC repo
         """
-        self._execute_call(["pull", "--glob", file_path])
+        self._execute_call(["pull", file_path])
 
     def push(self):
         """
