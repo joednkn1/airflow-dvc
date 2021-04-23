@@ -30,4 +30,4 @@ __all__ = [
     "run_cli",
 ]
 
-__version__ = "1.1.1"
+__version__ = "__version__ = "1.1.1""
