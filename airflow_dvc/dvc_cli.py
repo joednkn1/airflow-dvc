@@ -155,6 +155,12 @@ class DVCLocalCli:
         """
         self._execute_call(["add", path])
 
+    def pull_path(self, file_path: str):
+        """
+        Pull DVC repo
+        """
+        self._execute_call(["pull", "--glob", file_path])
+
     def push(self):
         """
         Push DVC changes upstream.

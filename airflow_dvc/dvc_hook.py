@@ -108,6 +108,8 @@ except ModuleNotFoundError:
         :returns: Descriptor to the file contents
         """
         clone_path, temp_dir, repo, dvc = clone_repo(repo)
+        # Pull the file
+        dvc.pull_path(path)
         temp_dir.cleanup()
         with open(os.path.join(clone_path, path), "r") as dvc_file:
             input_stream = io.StringIO(dvc_file.read())
