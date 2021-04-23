@@ -46,7 +46,7 @@ s3pypi = "^0.11.0"
 flakehell = "0.9.0"
 flake8 = "3.8.3"
 poetry-publish = "^0.4.1"
-bump2version = "^1.1.2"
+bump2version = "^1.0.1"
 gitchangelog = "^3.0.4"
 
 [tool.poetry.plugins]
