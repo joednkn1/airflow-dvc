@@ -153,9 +153,9 @@ class DVCFile:
         Open file for read and return file-like accessor
         """
         if self.descriptor is None:
-            self.descriptor = dvc_api.open(
+            self.descriptor = dvc_open(
+                self.dvc_repo,
                 self.path,
-                repo=self.dvc_repo,
             )
         return self.descriptor.__enter__()
 
