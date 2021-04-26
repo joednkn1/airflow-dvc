@@ -6,7 +6,10 @@
 
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
+<a href="https://covidgenomics.com/">
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
+</a>
+
 
 ## Installation
 
