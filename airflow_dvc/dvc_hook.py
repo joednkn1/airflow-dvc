@@ -8,6 +8,7 @@ import io
 import os
 import shutil
 import tempfile
+import pathlib
 from dataclasses import dataclass
 from typing import Any, List, Optional, TextIO
 
@@ -352,7 +353,9 @@ class DVCHook(BaseHook):
         clone_path, temp_dir, repo, dvc = clone_repo(self.dvc_repo, temp_path)
         for file in updated_files:
             with file as input_file:
-                with open(os.path.join(clone_path, file.dvc_path), "w") as out:
+                output_dvc_path = os.path.join(clone_path, file.dvc_path)
+                pathlib.Path(os.path.dirname(os.path.abspath(output_dvc_path))).mkdir(parents=True, exist_ok=True)
+                with open(output_dvc_path, "w") as out:
                     out.write(input_file.read())
             dvc.add(file.dvc_path)
 
