@@ -21,6 +21,7 @@ class DVCDownloadOperator(PythonOperator):
 
     dvc_repo: str  # Clone URL for a GIT repo
     files: Downloads  # List of files to be downloaded or function that returns it
+    empty_fallback: bool # Create empty file if it does not exists remotely
 
     @property
     def affected_files(self) -> List[DVCDownload]:
@@ -29,7 +30,7 @@ class DVCDownloadOperator(PythonOperator):
         return self.files
 
     @apply_defaults
-    def __init__(self, dvc_repo: str, files: Downloads, **kwargs) -> None:
+    def __init__(self, dvc_repo: str, files: Downloads, empty_fallback: bool = False, **kwargs) -> None:
         """
         Creates Airflow download operator.
 
@@ -38,6 +39,7 @@ class DVCDownloadOperator(PythonOperator):
         """
         super().__init__(**kwargs, python_callable=self._execute_operator)
         self.dvc_repo = dvc_repo
+        self.empty_fallback = empty_fallback
         self.files = files
         if not callable(self.files):
             for file in self.files:
@@ -53,4 +55,5 @@ class DVCDownloadOperator(PythonOperator):
         dvc = DVCHook(self.dvc_repo)
         dvc.download(
             downloaded_files=files,
+            empty_fallback=self.empty_fallback,
         )
