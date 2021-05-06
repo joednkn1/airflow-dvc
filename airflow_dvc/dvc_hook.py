@@ -99,6 +99,10 @@ try:
                 path,
                 repo=repo,
             )
+        except dvc.exceptions.OutputNotFoundError:
+            if empty_fallback:
+                return io.StringIO()
+            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
         except dvc.exceptions.FileMissingError:
             if empty_fallback:
                 return io.StringIO()
