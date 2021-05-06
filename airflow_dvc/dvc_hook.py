@@ -81,35 +81,57 @@ def clone_repo(
 
 try:
     import dvc.api as dvc_api
+    import dvc.exceptions
 
-    def dvc_open(repo: str, path: str) -> TextIO:
+    def dvc_open(repo: str, path: str, empty_fallback: bool = False) -> TextIO:
         """
         Open descriptor to the DVC file
 
         :param repo: Repo URL
         :param path: DVC file path
+        :param empty_fallback: Create empty file when it does not exists remotely
+          Otherwise function throws FileNotFoundError
         :returns: Descriptor to the file contents
         """
-        return dvc_api.open(
-            path,
-            repo=repo,
-        )
+        try:
+            return dvc_api.open(
+                path,
+                repo=repo,
+            )
+        except dvc.exceptions.FileMissingError:
+            if empty_fallback:
+                return io.StringIO()
+            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
+        except dvc.exceptions.PathMissingError:
+            if empty_fallback:
+                return io.StringIO()
+            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
 
 
 except ModuleNotFoundError:
     # Fallback when DVC api module is not available
     # In this case we use DVC client
-    def dvc_open(repo: str, path: str) -> TextIO:
+    def dvc_open(repo: str, path: str, empty_fallback: bool = False) -> TextIO:
         """
         Open descriptor to the DVC file
 
         :param repo: Repo URL
         :param path: DVC file path
+        :param empty_fallback: Create empty file when it does not exists remotely
+          Otherwise function throws FileNotFoundError
         :returns: Descriptor to the file contents
         """
         clone_path, temp_dir, repo, dvc = clone_repo(repo)
+        if not os.path.isfile(os.path.join(clone_path, f"{path}.dvc")):
+            if empty_fallback:
+                return io.StringIO()
+            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
         # Pull the file
         dvc.pull_path(path)
+        if not os.path.isfile(os.path.join(clone_path, path)):
+            if empty_fallback:
+                return io.StringIO()
+            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
         with open(os.path.join(clone_path, path), "r") as dvc_file:
             input_stream = io.StringIO(dvc_file.read())
         temp_dir.cleanup()
@@ -135,11 +157,13 @@ class DVCFile:
     path: str  # File path
     dvc_repo: str  # Clone URL for the GIT repository that have DVC configured
     descriptor = None  # File-like object used for access
+    empty_fallback: bool # Use empty file as fallback when it does not exists remotely
 
     def __init__(
         self,
         path: str,
         dvc_repo: str,
+        empty_fallback: bool = False,
     ):
         """
         Create DVC file access object
@@ -148,6 +172,7 @@ class DVCFile:
         """
         self.path = path
         self.dvc_repo = dvc_repo
+        self.empty_fallback = empty_fallback
         self.descriptor = None
 
     def __enter__(self):
@@ -158,6 +183,7 @@ class DVCFile:
             self.descriptor = dvc_open(
                 self.dvc_repo,
                 self.path,
+                empty_fallback=self.empty_fallback,
             )
         return self.descriptor.__enter__()
 
@@ -272,6 +298,7 @@ class DVCHook(BaseHook):
     def download(
         self,
         downloaded_files: List[DVCDownload],
+        empty_fallback: bool = False,
     ):
         """
         Download files from the DVC.
@@ -279,12 +306,13 @@ class DVCHook(BaseHook):
 
         :param downloaded_files: Files to be downloaded
           (for more details see DVCDownload class)
+        :param empty_fallback: Create empty file if it does not exists remotely
         """
         if len(downloaded_files) == 0:
             return
 
         for downloaded_file in downloaded_files:
-            with self.get(downloaded_file.dvc_path) as data_input:
+            with self.get(downloaded_file.dvc_path, empty_fallback=empty_fallback) as data_input:
                 downloaded_file.write(data_input.read())
 
     def update(
@@ -343,15 +371,18 @@ class DVCHook(BaseHook):
         print("Perform cleanup")
         temp_dir.cleanup()
 
-    def get(self, path: str) -> DVCFile:
+    def get(self, path: str, empty_fallback: bool = False) -> DVCFile:
         """
         Returns existing DVC file handler.
         This is useful to read the files.
 
         :param path: Path inside the DVC repo to the file you want to access
+        :param empty_fallback: Create empty file when it does not exists remotely
+          Otherwise with ... as ... will throw FileNotFoundError
         :returns: DVCFile handler corresponding to the given file
         """
         return DVCFile(
             path=path,
             dvc_repo=self.dvc_repo,
+            empty_fallback=empty_fallback,
         )
