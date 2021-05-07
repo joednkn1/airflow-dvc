@@ -11,6 +11,7 @@ from airflow.utils.decorators import apply_defaults
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_upload import DVCUpload
 from airflow_dvc.logs import LOGS
+from airflow_dvc.exceptions import add_log_exception_handler
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
 
@@ -43,6 +44,8 @@ class DVCUpdateOperator(PythonOperator):
         files: Uploads,
         commit_message: Optional[str] = None,
         temp_path: Optional[str] = None,
+        disable_error_message: bool = False,
+        ignore_errors: bool = False,
         **kwargs
     ) -> None:
         """
@@ -51,7 +54,11 @@ class DVCUpdateOperator(PythonOperator):
         :param dvc_repo: Git clone url for repo with configured DVC
         :param files: Files to be uploaded (please see DVCUpload class for more details)
         """
-        super().__init__(**kwargs, python_callable=self._execute_operator)
+        super().__init__(**kwargs, python_callable=add_log_exception_handler(
+            self._execute_operator,
+            disable_error_message=disable_error_message,
+            ignore_errors=ignore_errors,
+        ))
         self.dvc_repo = dvc_repo
         self.files = files
         self.commit_message = commit_message

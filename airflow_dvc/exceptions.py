@@ -2,6 +2,7 @@
 from typing import Optional, List
 from git import exc
 from semantic_version import Version, SimpleSpec
+from airflow_dvc.logs import LOGS
 
 
 class DVCFileMissingError(FileNotFoundError):
@@ -77,3 +78,24 @@ class DVCInvalidVersion(Exception):
         self.description = description
         self.constraint = constraint
         super().__init__(f"{self.description}. Required version: {constraint}. Got: {version}")
+
+
+def add_log_exception_handler(
+    fn,
+    disable_error_message: bool = False,
+    ignore_errors: bool = False,
+):
+    inner_fn = fn
+
+    def wrapped_fn(*args, **kwargs):
+        try:
+            return inner_fn(*args, **kwargs)
+        except Exception as e:
+            if not disable_error_message:
+                LOGS.exceptions.error(f"Error was thrown inside the airflow-dvc code. "
+                                      f"This is just a useful message to help with Airflow "
+                                      f"pipeline debugging. The error will be reraised. Error message: {e}")
+            if ignore_errors:
+                return None
+            raise e
+    return wrapped_fn
