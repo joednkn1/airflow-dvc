@@ -7,8 +7,11 @@ import io
 import os
 import subprocess
 import sys
+import semver
 import threading
 from io import StringIO
+from airflow_dvc.exceptions import DVCCliCommandError, DVCMissingExecutableError
+from airflow_dvc.logs import LOGS
 
 try:
     from dvc.main import main as call_dvc_main
@@ -33,7 +36,7 @@ def get_sys_exit_noop(
     def sys_exit_noop(dumb_code=0):
         nonlocal original_callback
         if dumb_code != 0:
-            print(
+            LOGS.dvc.error(
                 "Invalid exit code was returned by the DVC. The program will be terminated."
             )
             original_callback(dumb_code)
@@ -58,11 +61,27 @@ class DVCLocalCli:
         """
         self.working_path = path
 
+    @staticmethod
+    def _check_dvc_shell_executable() -> semver.VersionInfo:
+        """
+        Check if DVC executable is accessible from the shell.
+        Raises airflow_dvc.exceptions.DVCMissingExecutableError if the executable is not found.
+        """
+        cmd = " ".join(["dvc", "version"])
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        out, err = p.communicate()
+        if p.returncode != 0:
+            raise DVCMissingExecutableError()
+        try:
+            return semver.VersionInfo.parse(out.decode().replace("\n", "").replace("\r", ""))
+        except ValueError:
+            raise DVCMissingExecutableError()
+
     def _execute_call(
         self,
         args: List[str],
         path: Optional[str] = None,
-        collect_output: bool = False,
+        collect_output: bool = True,
         input: Optional[str] = None,
         use_shell: bool = True,
         spawn_process: bool = False,
@@ -86,14 +105,15 @@ class DVCLocalCli:
 
         if use_shell:
             cmd = " ".join(["dvc", *args])
-            print(f"Spawn process (DVC): {cmd}")
-            p = subprocess.Popen(cmd, shell=True, cwd=path)
-            p.communicate()
+            LOGS.dvc.debug(f"Spawn process (DVC): {cmd}")
+            DVCLocalCli._check_dvc_shell_executable()
+            p = subprocess.Popen(cmd, shell=True, cwd=path, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+            out, err = p.communicate()
             if p.returncode != 0:
-                raise Exception("Error running DVC")
+                raise DVCCliCommandError(cmd, out.decode(), p.returncode, path)
             return ""
         elif spawn_process:
-            print("Spawn process (DVC)")
+            LOGS.dvc.debug("Spawn process (DVC)")
             t = threading.Thread(
                 target=self._execute_call,
                 args=(args,),
@@ -106,14 +126,14 @@ class DVCLocalCli:
             )
             t.start()
             t.join()
-            print("Process finished (DVC)")
+            LOGS.dvc.debug("Process finished (DVC)")
             return ""
 
         cwd = os.getcwd()
         os.chdir(path)
         call_args = args
         sys.argv = call_args
-        print(
+        LOGS.dvc.debug(
             "Running DVC command: {} (path: {})".format(
                 " ".join(sys.argv), path
             )

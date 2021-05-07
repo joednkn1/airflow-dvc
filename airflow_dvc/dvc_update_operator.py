@@ -10,6 +10,7 @@ from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.dvc_upload import DVCUpload
+from airflow_dvc.logs import LOGS
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
 
@@ -64,9 +65,13 @@ class DVCUpdateOperator(PythonOperator):
         if callable(self.files):
             files = self.files(*args, **kwargs)
         dvc = DVCHook(self.dvc_repo)
+        LOGS.dvc_update_operator.info(
+            f"Update operator executed for files: {', '.join([file.dvc_path for file in files])}"
+        )
         dvc.update(
             updated_files=files,
             dag_id=self.dag_id,
             commit_message=self.commit_message,
             temp_path=self.temp_path,
         )
+        LOGS.dvc_update_operator.info("Update completed.")

@@ -15,11 +15,13 @@ from typing import Any, List, Optional, TextIO
 from airflow.hooks.base import BaseHook
 from airflow.models.dag import DAG
 from airflow.models.dagbag import DagBag
-from git import Repo
+from git import Repo, exc
 
 from airflow_dvc.dvc_cli import DVCLocalCli
 from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_upload import DVCUpload
+from airflow_dvc.exceptions import DVCFileMissingError, DVCGitRepoNotAccessibleError, DVCGitUpdateError
+from airflow_dvc.logs import LOGS
 
 try:
     # flake8: noqa
@@ -75,7 +77,10 @@ def clone_repo(
     if os.path.isdir(clone_path):
         shutil.rmtree(clone_path)
     os.makedirs(clone_path, exist_ok=True)
-    repo = Repo.clone_from(dvc_repo, clone_path)
+    try:
+        repo = Repo.clone_from(dvc_repo, clone_path)
+    except exc.GitError as e:
+        raise DVCGitRepoNotAccessibleError(dvc_repo, e)
     dvc = DVCLocalCli(clone_path)
     return clone_path, temp_dir, repo, dvc
 
@@ -91,26 +96,27 @@ try:
         :param repo: Repo URL
         :param path: DVC file path
         :param empty_fallback: Create empty file when it does not exists remotely
-          Otherwise function throws FileNotFoundError
+          Otherwise function throws airflow_dvc.exceptions.DVCFileMissingError
         :returns: Descriptor to the file contents
         """
         try:
+            # Url will fail if the file is missing
+            dvc.api.get_url(
+                path,
+                repo=repo,
+            )
             return dvc_api.open(
                 path,
                 repo=repo,
             )
-        except dvc.exceptions.OutputNotFoundError:
-            if empty_fallback:
-                return io.StringIO()
-            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
         except dvc.exceptions.FileMissingError:
             if empty_fallback:
                 return io.StringIO()
-            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
+            raise DVCFileMissingError(repo, path)
         except dvc.exceptions.PathMissingError:
             if empty_fallback:
                 return io.StringIO()
-            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
+            raise DVCFileMissingError(repo, path)
 
 
 except ModuleNotFoundError:
@@ -123,20 +129,21 @@ except ModuleNotFoundError:
         :param repo: Repo URL
         :param path: DVC file path
         :param empty_fallback: Create empty file when it does not exists remotely
-          Otherwise function throws FileNotFoundError
+          Otherwise function throws airflow_dvc.exceptions.DVCFileMissingError
         :returns: Descriptor to the file contents
         """
+        repo_url = repo
         clone_path, temp_dir, repo, dvc = clone_repo(repo)
         if not os.path.isfile(os.path.join(clone_path, f"{path}.dvc")):
             if empty_fallback:
                 return io.StringIO()
-            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
+            raise DVCFileMissingError(repo_url, path)
         # Pull the file
         dvc.pull_path(path)
         if not os.path.isfile(os.path.join(clone_path, path)):
             if empty_fallback:
                 return io.StringIO()
-            raise FileNotFoundError(f"Repo: {repo} Path: {path}")
+            raise DVCFileMissingError(repo_url, path)
         with open(os.path.join(clone_path, path), "r") as dvc_file:
             input_stream = io.StringIO(dvc_file.read())
         temp_dir.cleanup()
@@ -353,7 +360,7 @@ class DVCHook(BaseHook):
             )
         commit_message = f"{commit_message}\ndag: {dag_id}"
 
-        print("Add files to DVC")
+        LOGS.dvc_hook.info("Add files to DVC")
         clone_path, temp_dir, repo, dvc = clone_repo(self.dvc_repo, temp_path)
         for file in updated_files:
             with file as input_file:
@@ -363,19 +370,22 @@ class DVCHook(BaseHook):
                     out.write(input_file.read())
             dvc.add(file.dvc_path)
 
-        print("Push DVC")
+        LOGS.dvc_hook.info("Push DVC")
         dvc.push()
 
-        print("Add DVC files to git")
-        repo_add_dvc_files(repo, [file.dvc_path for file in updated_files])
+        try:
+            LOGS.dvc_hook.info("Add DVC files to git")
+            repo_add_dvc_files(repo, [file.dvc_path for file in updated_files])
 
-        print("Commit")
-        repo.index.commit(commit_message)
+            LOGS.dvc_hook.info("Commit")
+            repo.index.commit(commit_message)
 
-        print("Git push")
-        repo.remotes.origin.push()
+            LOGS.dvc_hook.info("Git push")
+            repo.remotes.origin.push()
+        except exc.GitError as e:
+            raise DVCGitUpdateError(self.dvc_repo, [file.dvc_path for file in updated_files], e)
 
-        print("Perform cleanup")
+        LOGS.dvc_hook.info("Perform cleanup")
         temp_dir.cleanup()
 
     def get(self, path: str, empty_fallback: bool = False) -> DVCFile:
@@ -385,7 +395,7 @@ class DVCHook(BaseHook):
 
         :param path: Path inside the DVC repo to the file you want to access
         :param empty_fallback: Create empty file when it does not exists remotely
-          Otherwise with ... as ... will throw FileNotFoundError
+          Otherwise with ... as ... will throw airflow_dvc.exceptions.DVCFileMissingError
         :returns: DVCFile handler corresponding to the given file
         """
         return DVCFile(

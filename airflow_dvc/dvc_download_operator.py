@@ -10,6 +10,7 @@ from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_hook import DVCHook
+from airflow_dvc.logs import LOGS
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
@@ -53,7 +54,11 @@ class DVCDownloadOperator(PythonOperator):
         if callable(self.files):
             files = self.files(*args, **kwargs)
         dvc = DVCHook(self.dvc_repo)
+        LOGS.dvc_download_operator.info(
+            f"Download operator executed for files: {', '.join([file.dvc_path for file in files])}"
+        )
         dvc.download(
             downloaded_files=files,
             empty_fallback=self.empty_fallback,
         )
+        LOGS.dvc_download_operator.info("Download completed.")

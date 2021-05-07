@@ -9,6 +9,8 @@ from .dvc_update_sensor import DVCUpdateSensor
 from .dvc_upload import (DVCCallbackUpload, DVCPathUpload, DVCS3Upload,
                          DVCStringUpload, DVCUpload)
 from .plugin import DVCPlugin
+from . import exceptions
+from . import logs
 
 __all__ = [
     "DVCLocalCli",
@@ -28,6 +30,8 @@ __all__ = [
     "DVCPlugin",
     "DVCCommit",
     "run_cli",
+    "exceptions",
+    "logs",
 ]
 
 __version__ = "1.4.0"
