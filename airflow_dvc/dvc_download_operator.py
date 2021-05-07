@@ -11,6 +11,7 @@ from airflow.utils.decorators import apply_defaults
 from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
+from airflow_dvc.exceptions import add_log_exception_handler
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
@@ -34,14 +35,26 @@ class DVCDownloadOperator(PythonOperator):
         return self.files
 
     @apply_defaults
-    def __init__(self, dvc_repo: str, files: Downloads, empty_fallback: bool = False, **kwargs) -> None:
+    def __init__(
+        self,
+        dvc_repo: str,
+        files: Downloads,
+        empty_fallback: bool = False,
+        disable_error_message: bool = False,
+        ignore_errors: bool = False,
+        **kwargs,
+    ) -> None:
         """
         Creates Airflow download operator.
 
         :param dvc_repo: Git clone url for repo with configured DVC
         :param files: Files to be downloaded (please see DVCDownload class for more details)
         """
-        super().__init__(**kwargs, python_callable=self._execute_operator)
+        super().__init__(**kwargs, python_callable=add_log_exception_handler(
+            self._execute_operator,
+            disable_error_message=disable_error_message,
+            ignore_errors=ignore_errors,
+        ))
         self.dvc_repo = dvc_repo
         self.empty_fallback = empty_fallback
         self.files = files

@@ -12,6 +12,7 @@ from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
+from airflow_dvc.exceptions import add_log_exception_handler
 
 
 class DVCUpdateSensor(BaseSensorOperator):
@@ -33,6 +34,8 @@ class DVCUpdateSensor(BaseSensorOperator):
         dvc_repo: str,
         files: List[str],
         dag,
+        disable_error_message: bool = False,
+        ignore_errors: bool = False,
         *args,
         **kwargs,
     ):
@@ -47,6 +50,11 @@ class DVCUpdateSensor(BaseSensorOperator):
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
+        self.poke = add_log_exception_handler(
+            self.poke,
+            disable_error_message=disable_error_message,
+            ignore_errors=ignore_errors,
+        )
 
         curframe = inspect.currentframe()
         caller = inspect.getouterframes(curframe, 2)[3]
