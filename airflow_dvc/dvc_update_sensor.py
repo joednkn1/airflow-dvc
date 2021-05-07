@@ -11,6 +11,7 @@ from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
+from airflow_dvc.logs import LOGS
 
 
 class DVCUpdateSensor(BaseSensorOperator):
@@ -64,10 +65,13 @@ class DVCUpdateSensor(BaseSensorOperator):
         dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
         for file in self.files:
-            print(
+            LOGS.dvc_update_sensor.info(
                 f"Current date = {last_start_date} vs. file modified date {dvc.modified_date(file)}"
             )
             if dvc.modified_date(file) >= last_start_date:
+                LOGS.dvc_update_sensor.info(
+                    "DVC sensor is active."
+                )
                 update = True
                 break
         return update

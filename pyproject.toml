@@ -32,6 +32,7 @@ GitPython = "^3.1.14"
 apache-airflow = ">=2.0.0"
 apache-airflow-providers-amazon = "^1.3.0"
 typer = "^0.3.2"
+semver = "^2.13.0"
 
 [tool.poetry.extras]
 dvc = ["s3", "dvc>=2.0.18"]
