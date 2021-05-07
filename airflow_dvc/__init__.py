@@ -11,6 +11,7 @@ from .dvc_upload import (DVCCallbackUpload, DVCPathUpload, DVCS3Upload,
 from .plugin import DVCPlugin
 from . import exceptions
 from . import logs
+from . import config
 
 __all__ = [
     "DVCLocalCli",
@@ -32,6 +33,7 @@ __all__ = [
     "run_cli",
     "exceptions",
     "logs",
+    "config",
 ]
 
 __version__ = "1.5.0"

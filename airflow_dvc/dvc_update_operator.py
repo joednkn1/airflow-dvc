@@ -22,6 +22,9 @@ class DVCUpdateOperator(PythonOperator):
     For more information please see DVCUpload abstract class.
     """
 
+    # Fields to apply Airflow templates
+    template_fields = ['files', 'commit_message', 'temp_path']
+
     dvc_repo: str  # Clone URL for a GIT repo
     files: Uploads  # List of files to be uploaded or function that returns it
     commit_message: Optional[str]  # Optional Git custom commit message

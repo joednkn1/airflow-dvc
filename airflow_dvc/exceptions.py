@@ -1,6 +1,7 @@
 
 from typing import Optional, List
 from git import exc
+from semantic_version import Version, SimpleSpec
 
 
 class DVCFileMissingError(FileNotFoundError):
@@ -64,3 +65,15 @@ class DVCGitUpdateError(Exception):
         super().__init__(f"Cannot update DVC. Git push failed for repository "
                          f"{self.repo} (upload files {', '.join(self.updated_files)}). "
                          f"Error: {self.git_exception}")
+
+
+class DVCInvalidVersion(Exception):
+    version: Version
+    constraint: SimpleSpec
+    description: str
+
+    def __init__(self, description: str, version: Version, constraint: SimpleSpec):
+        self.version = version
+        self.description = description
+        self.constraint = constraint
+        super().__init__(f"{self.description}. Required version: {constraint}. Got: {version}")

@@ -20,6 +20,9 @@ class DVCDownloadOperator(PythonOperator):
     Operator that downloads given DVC files.
     """
 
+    # Fields to apply Airflow templates
+    template_fields = ['files']
+
     dvc_repo: str  # Clone URL for a GIT repo
     files: Downloads  # List of files to be downloaded or function that returns it
     empty_fallback: bool # Create empty file if it does not exists remotely
