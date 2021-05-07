@@ -59,6 +59,9 @@ class DVCCallbackDownload(DVCDownload):
     Download local file from DVC and run Python callback with the file content
     """
 
+    # Fields to apply Airflow templates
+    template_fields = ['dvc_path']
+
     callback: Callable[[str], None]
 
     def __init__(self, dvc_path: str, callback: Callable[[str], None]):
@@ -76,6 +79,9 @@ class DVCPathDownload(DVCDownload):
     """
     Download local file from DVC and save it to the given path
     """
+
+    # Fields to apply Airflow templates
+    template_fields = ['dvc_path', 'src']
 
     # Path to the local file that will be written
     src: str
@@ -99,6 +105,9 @@ class DVCS3Download(DVCDownload):
     as a temporary cache for files and you're not using shared-filesystem,
     so using DVCPathDownload is not an option.
     """
+
+    # Fields to apply Airflow templates
+    template_fields = ['dvc_path', 'bucket_name', 'bucket_path']
 
     # Connection ID (the same as for Airflow S3Hook)
     # For more details please see:

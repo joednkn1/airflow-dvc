@@ -7,16 +7,20 @@ import io
 import os
 import subprocess
 import sys
-import semver
+import semantic_version
 import threading
 from io import StringIO
-from airflow_dvc.exceptions import DVCCliCommandError, DVCMissingExecutableError
+from airflow_dvc.exceptions import DVCCliCommandError, DVCMissingExecutableError, DVCInvalidVersion
 from airflow_dvc.logs import LOGS
+from airflow_dvc.config import get_config
 
 try:
     from dvc.main import main as call_dvc_main
+    from dvc import __version__ as _call_dvc_main_version
+    call_dvc_main_version = semantic_version.Version(_call_dvc_main_version)
 except ModuleNotFoundError:
     call_dvc_main = None
+    call_dvc_main_version = None
 
 
 from typing import Callable, List, Optional
@@ -62,7 +66,7 @@ class DVCLocalCli:
         self.working_path = path
 
     @staticmethod
-    def _check_dvc_shell_executable() -> semver.VersionInfo:
+    def _check_dvc_shell_executable() -> semantic_version.Version:
         """
         Check if DVC executable is accessible from the shell.
         Raises airflow_dvc.exceptions.DVCMissingExecutableError if the executable is not found.
@@ -73,7 +77,13 @@ class DVCLocalCli:
         if p.returncode != 0:
             raise DVCMissingExecutableError()
         try:
-            return semver.VersionInfo.parse(out.decode().replace("\n", "").replace("\r", ""))
+            text = out.decode().split("\n")[0].replace("DVC version: ", "").split("(")[0].replace(" ", "")
+            ver = semantic_version.Version(text)
+            if not get_config().dvc_version_constraint.match(ver):
+                raise DVCInvalidVersion(
+                    "DVC executable in your PATH has invalid version",
+                    ver, get_config().dvc_version_constraint)
+            return ver
         except ValueError:
             raise DVCMissingExecutableError()
 
@@ -102,6 +112,10 @@ class DVCLocalCli:
 
         if call_dvc_main is None:
             use_shell = True
+        else:
+            if not get_config().dvc_version_constraint.match(call_dvc_main_version):
+                # DVC package has invalid version
+                use_shell = True
 
         if use_shell:
             cmd = " ".join(["dvc", *args])

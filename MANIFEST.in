@@ -5,3 +5,4 @@ include example/dags/dvc_sensor_example.py
 include example/dags/dvc_upload_example.py
 include example/plugins
 include example/plugins/dvc.py
+include pyproject.toml

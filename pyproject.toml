@@ -11,13 +11,16 @@ include = [
     { path = 'example/dags/*', format = 'sdist' },
     { path = 'example/plugins/*', format = 'wheel' },
     { path = 'example/plugins/*', format = 'sdist' },
+    { path = 'pyproject.toml', format = 'wheel' },
+    { path = 'pyproject.toml', format = 'sdist' },
     "README.md",
     "example",
     "example/dags",
     "example/dags/dvc_sensor_example.py",
     "example/dags/dvc_upload_example.py",
     "example/plugins",
-    "example/plugins/dvc.py"
+    "example/plugins/dvc.py",
+    "pyproject.toml"
 ]
 
 [tool.poetry.scripts]
@@ -33,6 +36,8 @@ apache-airflow = ">=2.0.0"
 apache-airflow-providers-amazon = "^1.3.0"
 typer = "^0.3.2"
 semver = "^2.13.0"
+semantic-version = "^2.8.5"
+toml = "^0.10.2"
 
 [tool.poetry.extras]
 dvc = ["s3", "dvc>=2.0.18"]

@@ -24,6 +24,9 @@ class DVCUpdateSensor(BaseSensorOperator):
     files: List[str]  # Files to watch for
     instance_context: str
 
+    # Fields to apply Airflow templates
+    template_fields = ['files']
+
     @apply_defaults
     def __init__(
         self,
