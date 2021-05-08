@@ -105,14 +105,14 @@ class AppBuilderDVCTargetsView(AppBuilderBaseView):
             repo_url_info = parse_git_url(target)
             target_name = f"{repo_url_info.owner}/{repo_url_info.repo}"
             if target_name in dvc_diagram_nodes:
-                target_node_id = dvc_diagram_nodes[target_name].id
+                target_node_id = dvc_diagram_nodes[target_name]["id"]
             else:
                 target_node_id = dvc_diagram_free_id
                 dvc_diagram_free_id += 1
             for operator in repos[target]:
                 dag_id = operator.dag.dag_id
                 if dag_id in dvc_diagram_nodes:
-                    dag_node_id = dvc_diagram_nodes[dag_id].id
+                    dag_node_id = dvc_diagram_nodes[dag_id]["id"]
                 else:
                     dag_node_id = dvc_diagram_free_id
                     dvc_diagram_free_id += 1
