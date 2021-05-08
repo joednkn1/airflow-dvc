@@ -2,6 +2,7 @@
 from collections import defaultdict
 
 from .platforms import PLATFORMS, PLATFORMS_MAP
+from airflow_dvc.logs import LOGS
 
 # Possible values to extract from a Git Url
 REQUIRED_ATTRIBUTES = (
@@ -130,10 +131,11 @@ SUPPORTED_ATTRIBUTES = (
 )
 
 
-def _parse(url, check_domain=True):
+def _parse(url: str, check_domain: bool = True):
     # Values are None by default
     parsed_info = defaultdict(lambda: None)
     parsed_info["port"] = ""
+    LOGS.git_url_parser.info(f"Parse GIT url: {url}")
 
     # Defaults to all attributes
     map(parsed_info.setdefault, SUPPORTED_ATTRIBUTES)
@@ -145,15 +147,17 @@ def _parse(url, check_domain=True):
 
             # Skip if not matched
             if not match:
-                # print("[%s] URL: %s dit not match %s" % (name, url, regex.pattern))
+                LOGS.git_url_parser.info(f"GIT url {url} not matched by {regex.pattern} for platform {platform}")
                 continue
 
             # Skip if domain is bad
             domain = match.group("domain")
-            # print('[%s] DOMAIN = %s' % (url, domain,))
+            if "@" in domain:
+                domain = domain.split("@")[-1]
+            LOGS.git_url_parser.info(f"GIT url domain is: {domain}")
             if check_domain:
                 if platform.DOMAINS and not (domain in platform.DOMAINS):
-                    # print("domain: %s not in %s" % (domain, platform.DOMAINS))
+                    LOGS.git_url_parser.info(f"GIT url domain {domain} not listed in {' ,'.join(platform.DOMAINS)}")
                     continue
 
             # Get matches as dictionary
@@ -173,9 +177,11 @@ def _parse(url, check_domain=True):
                     "protocol": protocol,
                 }
             )
+            LOGS.git_url_parser.info(f"Correctly parsed GIT url {url}")
             return parsed_info
 
     # Empty if none matched
+    LOGS.git_url_parser.info(f"Invalid URL {url}")
     return parsed_info
 
 
