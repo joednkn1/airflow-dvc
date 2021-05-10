@@ -1,3 +1,8 @@
+"""
+Logging utilities
+
+@Piotr Styczyński 2021
+"""
 import inspect
 import logging
 

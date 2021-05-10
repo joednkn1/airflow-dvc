@@ -12,6 +12,7 @@ from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
+from airflow_dvc.stats import DVCDownloadMetadata
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
@@ -62,7 +63,7 @@ class DVCDownloadOperator(PythonOperator):
             for file in self.files:
                 file.dvc_repo = dvc_repo
 
-    def _execute_operator(self, *args, **kwargs):
+    def _execute_operator(self, *args, **kwargs) -> DVCDownloadMetadata:
         """
         Perform the DVC uploads.
         """
@@ -73,8 +74,9 @@ class DVCDownloadOperator(PythonOperator):
         LOGS.dvc_download_operator.info(
             f"Download operator executed for files: {', '.join([file.dvc_path for file in files])}"
         )
-        dvc.download(
+        meta = dvc.download(
             downloaded_files=files,
             empty_fallback=self.empty_fallback,
         )
         LOGS.dvc_download_operator.info("Download completed.")
+        return meta

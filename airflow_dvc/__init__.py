@@ -12,6 +12,7 @@ from .plugin import DVCPlugin
 from . import exceptions
 from . import logs
 from . import config
+from . import stats
 
 __all__ = [
     "DVCLocalCli",
@@ -34,6 +35,7 @@ __all__ = [
     "exceptions",
     "logs",
     "config",
+    "stats",
 ]
 
 __version__ = "1.8.0"

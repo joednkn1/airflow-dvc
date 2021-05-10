@@ -1,4 +1,10 @@
 
+"""
+Script to publish Python package.
+Run via "poetry run publish"
+
+@Piotr Styczyński 2021
+"""
 from pathlib import Path
 
 from poetry_publish.publish import poetry_publish
