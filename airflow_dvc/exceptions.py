@@ -1,4 +1,8 @@
+"""
+Definitions of possible DVC errors
 
+@Piotr Styczyński 2021
+"""
 from typing import Optional, List
 from git import exc
 from semantic_version import Version, SimpleSpec
@@ -6,6 +10,9 @@ from airflow_dvc.logs import LOGS
 
 
 class DVCFileMissingError(FileNotFoundError):
+    """
+    DVC file is missing (remotely)
+    """
     repo: str
     file_path: str
 
@@ -16,6 +23,9 @@ class DVCFileMissingError(FileNotFoundError):
 
 
 class DVCCliCommandError(Exception):
+    """
+    DVC command in shell failed
+    """
     dvc_command: str
     dvc_output: Optional[str]
     dvc_exit_code: int
@@ -36,6 +46,9 @@ class DVCCliCommandError(Exception):
 
 
 class DVCMissingExecutableError(Exception):
+    """
+    DVC executable is missing (not callable from shell)
+    """
     def __init__(self):
         super().__init__("DVC Python library is missing and DVC "
                          "executable cannot be found in PATH. "
@@ -45,6 +58,9 @@ class DVCMissingExecutableError(Exception):
 
 
 class DVCGitRepoNotAccessibleError(Exception):
+    """
+    Repository is not cloneable (access was denied or repository was not found)
+    """
     git_exception: exc.GitError
     repo: str
 
@@ -55,6 +71,9 @@ class DVCGitRepoNotAccessibleError(Exception):
 
 
 class DVCGitUpdateError(Exception):
+    """
+    Problem with committing changes via git
+    """
     git_exception: exc.GitError
     updated_files: List[str]
     repo: str
@@ -69,6 +88,9 @@ class DVCGitUpdateError(Exception):
 
 
 class DVCInvalidVersion(Exception):
+    """
+    Installed DVC has invalid version
+    """
     version: Version
     constraint: SimpleSpec
     description: str
@@ -85,6 +107,10 @@ def add_log_exception_handler(
     disable_error_message: bool = False,
     ignore_errors: bool = False,
 ):
+    """
+    Utility that wraps function and adds log statement that prints all the error information
+    and then reraises that error.
+    """
     inner_fn = fn
 
     def wrapped_fn(*args, **kwargs):

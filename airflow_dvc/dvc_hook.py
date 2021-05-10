@@ -9,8 +9,9 @@ import os
 import shutil
 import tempfile
 import pathlib
+import time
 from dataclasses import dataclass
-from typing import Any, List, Optional, TextIO
+from typing import Any, List, Optional, TextIO, Tuple
 
 from airflow.hooks.base import BaseHook
 from airflow.models.dag import DAG
@@ -22,6 +23,7 @@ from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_upload import DVCUpload
 from airflow_dvc.exceptions import DVCFileMissingError, DVCGitRepoNotAccessibleError, DVCGitUpdateError
 from airflow_dvc.logs import LOGS
+from airflow_dvc.stats import DVCUpdateMetadata, DVCDownloadMetadata
 
 try:
     # flake8: noqa
@@ -311,7 +313,7 @@ class DVCHook(BaseHook):
         self,
         downloaded_files: List[DVCDownload],
         empty_fallback: bool = False,
-    ):
+    ) -> DVCDownloadMetadata:
         """
         Download files from the DVC.
         For single-file access please see get(...) method.
@@ -320,12 +322,28 @@ class DVCHook(BaseHook):
           (for more details see DVCDownload class)
         :param empty_fallback: Create empty file if it does not exists remotely
         """
+        start = time.time()
         if len(downloaded_files) == 0:
-            return
+            return DVCDownloadMetadata(
+                dvc_repo=self.dvc_repo,
+                downloaded_dvc_files=[],
+                downloaded_dvc_files_sizes=[],
+                duration=time.time()-start,
+            )
 
+        file_stats: List[Tuple[str, int]] = []
         for downloaded_file in downloaded_files:
             with self.get(downloaded_file.dvc_path, empty_fallback=empty_fallback) as data_input:
-                downloaded_file.write(data_input.read())
+                content = data_input.read()
+                downloaded_file.write(content)
+                file_stats.append((downloaded_file.dvc_path, len(content)))
+
+        return DVCDownloadMetadata(
+            dvc_repo=self.dvc_repo,
+            downloaded_dvc_files=[dvc_path for (dvc_path, _) in file_stats],
+            downloaded_dvc_files_sizes=[file_size for (_, file_size) in file_stats],
+            duration=time.time() - start,
+        )
 
     def update(
         self,
@@ -333,7 +351,7 @@ class DVCHook(BaseHook):
         dag_id: str,
         commit_message: Optional[str] = None,
         temp_path: Optional[str] = None,
-    ):
+    ) -> DVCUpdateMetadata:
         """
         Update given files and upload them to DVC repo.
         The procedure involves pushing DVC changes and commiting
@@ -348,8 +366,19 @@ class DVCHook(BaseHook):
         :param commit_message: Optional GIT commit message
         :param temp_path: Optional temporary clone path
         """
+        start = time.time()
         if len(updated_files) == 0:
-            return
+            return DVCUpdateMetadata(
+                dvc_repo=self.dvc_repo,
+                dag_id=dag_id,
+                temp_path=temp_path,
+                commit_message=None,
+                dvc_files_updated=[],
+                dvc_files_update_requested=[file.dvc_path for file in updated_files],
+                commit_hexsha=None,
+                committed_date=None,
+                duration=time.time() - start,
+            )
 
         if commit_message is None:
             file_list_str = ", ".join(
@@ -378,15 +407,27 @@ class DVCHook(BaseHook):
             repo_add_dvc_files(repo, [file.dvc_path for file in updated_files])
 
             LOGS.dvc_hook.info("Commit")
-            repo.index.commit(commit_message)
+            commit = repo.index.commit(commit_message)
 
             LOGS.dvc_hook.info("Git push")
             repo.remotes.origin.push()
         except exc.GitError as e:
             raise DVCGitUpdateError(self.dvc_repo, [file.dvc_path for file in updated_files], e)
 
+        meta = DVCUpdateMetadata(
+            dvc_repo=self.dvc_repo,
+            dag_id=dag_id,
+            temp_path=temp_dir.name,
+            commit_message=commit_message,
+            dvc_files_updated=[file.dvc_path for file in updated_files],
+            dvc_files_update_requested=[file.dvc_path for file in updated_files],
+            commit_hexsha=commit.hexsha,
+            committed_date=commit.committed_date,
+            duration=time.time() - start,
+        )
         LOGS.dvc_hook.info("Perform cleanup")
         temp_dir.cleanup()
+        return meta
 
     def get(self, path: str, empty_fallback: bool = False) -> DVCFile:
         """
