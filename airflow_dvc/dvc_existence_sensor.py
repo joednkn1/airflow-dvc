@@ -47,11 +47,11 @@ class DVCExistenceSensor(PythonSensor):
         :param files: Files to watch for
         :param dag: DAG object
         """
-        super().__init__(**kwargs, python_callable=add_log_exception_handler(
+        super().__init__(add_log_exception_handler(
             self._poke,
             disable_error_message=disable_error_message,
             ignore_errors=ignore_errors,
-        ))
+        ), **kwargs)
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
