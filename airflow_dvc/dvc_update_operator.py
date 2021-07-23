@@ -5,6 +5,7 @@ Airflow operator to upload files to DVC.
 """
 from typing import Callable, List, Optional, Union
 
+import os
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
 
@@ -80,11 +81,18 @@ class DVCUpdateOperator(PythonOperator):
         LOGS.dvc_update_operator.info(
             f"Update operator executed for files: {', '.join([file.dvc_path for file in files])}"
         )
+        commit_message = self.commit_message
+        if commit_message is None:
+            file_list_str = ", ".join(
+                [os.path.basename(file.dvc_path) for file in self.files]
+            )
+            commit_message = (
+                f"DVC Automatically updated files: {file_list_str}"
+            )
+        commit_message = f"{commit_message}\ndag: {self.dag_id}"
         meta = dvc.update(
             updated_files=files,
-            dag_id=self.dag_id,
-            commit_message=self.commit_message,
-            temp_path=self.temp_path,
+            commit_message=commit_message,
         )
         LOGS.dvc_update_operator.info("Update completed.")
         return meta
