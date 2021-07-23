@@ -8,11 +8,12 @@ from typing import Callable, List, Union
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.decorators import apply_defaults
 
-from airflow_dvc.dvc_download import DVCDownload
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
 from airflow_dvc.stats import DVCDownloadMetadata
+
+from dvc_fs.dvc_download import DVCDownload
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
