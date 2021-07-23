@@ -30,7 +30,7 @@ The package provides the following core features:
 * 📊 [DVC Operator view](https://github.com/covid-genomics/airflow-dvc#-dvc-operator-view) (tab to browse all configured DVC operators)
 * 💾 [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc#-dvcupdateoperator-uploading) (for uploading data to DVC)
 * ⬇️ [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc#%EF%B8%8F-dvcdownloadoperator-downloading) (for downloading data from DVC)
-* 👀 [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc#-dvcsensor) (for waiting for a file modification on DVC)
+* 👀 [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc#-dvcupdatesensor) (for waiting for a file modification on DVC)
 * 🤖 [DVCHook](https://github.com/covid-genomics/airflow-dvc#-dvchook) (high-level client for DVC)
 
 ## Run examples yourself
@@ -336,9 +336,9 @@ We can use `VCDownloadOperator` similarily to the `DVCUpdateOperator`. The synta
 
 The `DVCDownload` implementations are similar to `DVCUpload`.
 
-### 👀 DVCSensor
+### 👀 DVCUpdateSensor
 
-`DVCSensor` will allow you to pause the DAG run until the specified file will be updated.
+`DVCUpdateSensor` will allow you to pause the DAG run until the specified file will be updated.
 The sensor checks the date of the latest DAG run and compares it with timestamp of meta DVC file in the repo.
 
 ```python
@@ -370,6 +370,21 @@ with DAG('dvc_sensor_example', description='Another tutorial DAG',
 
     dummy_task >> sensor_task >> task
 
+```
+
+### 👀 DVCExistenceSensor
+
+The `DVCExistenceSensor` is similar to the `DVCUpdateSensor` but it checks if the file exists in the DVC repo:
+```python
+    from airflow_dvc import DVCExistenceSensor
+
+    # Sensor will wait till the file is present
+    sensor_task = DVCExistenceSensor(
+        task_id='dvc_sensor_task',
+        dag=dag,
+        dvc_repo="<REPO_CLONE_URL>",
+        files=["some_path/some_subfolder/some_file.txt"],
+    )
 ```
 
 ### 🤖 DVCHook
