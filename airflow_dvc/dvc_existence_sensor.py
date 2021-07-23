@@ -6,7 +6,7 @@ Airflow sensor to wait for DVC files changes.
 import inspect
 from typing import Callable, List, Optional, Union
 
-from airflow.sensors.base import BaseSensorOperator
+from airflow.sensors.python import PythonSensor
 from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
@@ -16,7 +16,7 @@ from airflow_dvc.exceptions import add_log_exception_handler
 FileListLike = Union[List[str], Callable[..., List[str]]]
 
 
-class DVCExistenceSensor(BaseSensorOperator):
+class DVCExistenceSensor(PythonSensor):
     """
     Sensor that waits for the file/-s to be present in the DVC
     """
@@ -47,14 +47,14 @@ class DVCExistenceSensor(BaseSensorOperator):
         :param files: Files to watch for
         :param dag: DAG object
         """
+        super().__init__(**kwargs, python_callable=add_log_exception_handler(
+            self._poke,
+            disable_error_message=disable_error_message,
+            ignore_errors=ignore_errors,
+        ))
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
-        self.poke = add_log_exception_handler(
-            self.poke,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        )
 
         curframe = inspect.currentframe()
         caller = inspect.getouterframes(curframe, 2)[3]
@@ -63,7 +63,7 @@ class DVCExistenceSensor(BaseSensorOperator):
 
         super(DVCExistenceSensor, self).__init__(*args, **kwargs)
 
-    def poke(self, context, *args, **kwargs):
+    def _poke(self, *args, **kwargs):
         """
         Implementation of the Airflow interface to check if the DAG should proceed.
         """

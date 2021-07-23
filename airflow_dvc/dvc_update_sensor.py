@@ -7,7 +7,7 @@ import inspect
 from typing import List
 
 from airflow.models.dagrun import DagRun
-from airflow.sensors.base import BaseSensorOperator
+from airflow.sensors.python import PythonSensor
 from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
@@ -15,7 +15,7 @@ from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
 
 
-class DVCUpdateSensor(BaseSensorOperator):
+class DVCUpdateSensor(PythonSensor):
     """
     Sensor that waits until the given path will be updated in DVC.
     """
@@ -47,14 +47,14 @@ class DVCUpdateSensor(BaseSensorOperator):
         :param files: Files to watch for
         :param dag: DAG object
         """
+        super().__init__(**kwargs, python_callable=add_log_exception_handler(
+            self._poke,
+            disable_error_message=disable_error_message,
+            ignore_errors=ignore_errors,
+        ))
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
-        self.poke = add_log_exception_handler(
-            self.poke,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        )
 
         curframe = inspect.currentframe()
         caller = inspect.getouterframes(curframe, 2)[3]
@@ -63,7 +63,7 @@ class DVCUpdateSensor(BaseSensorOperator):
 
         super(DVCUpdateSensor, self).__init__(*args, **kwargs)
 
-    def poke(self, context):
+    def _poke(self, context):
         """
         Implementation of the Airflow interface to check if the DAG should proceed.
         """
