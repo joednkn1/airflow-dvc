@@ -7,13 +7,14 @@ import inspect
 from typing import Callable, List, Optional, Union
 
 from airflow.sensors.python import PythonSensor
-from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
 
 FileListLike = Union[List[str], Callable[..., List[str]]]
+
+TEMPLATE_FIELDS = ["templates_dict", "op_args", "op_kwargs", "files"]
 
 
 class DVCExistenceSensor(PythonSensor):
@@ -27,9 +28,8 @@ class DVCExistenceSensor(PythonSensor):
     instance_context: str
 
     # Fields to apply Airflow templates
-    template_fields = ['files']
+    template_fields = TEMPLATE_FIELDS
 
-    @apply_defaults
     def __init__(
         self,
         dvc_repo: str,
@@ -47,11 +47,11 @@ class DVCExistenceSensor(PythonSensor):
         :param files: Files to watch for
         :param dag: DAG object
         """
-        super().__init__(python_callable=add_log_exception_handler(
+        super().__init__(**kwargs, python_callable=add_log_exception_handler(
             self._poke,
             disable_error_message=disable_error_message,
             ignore_errors=ignore_errors,
-        ), **kwargs)
+        ))
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
@@ -60,6 +60,7 @@ class DVCExistenceSensor(PythonSensor):
         caller = inspect.getouterframes(curframe, 2)[3]
         caller_path = caller.filename.split("/")[-1]
         self.instance_context = f"({caller_path}:{caller.lineno})"
+        self.template_fields = TEMPLATE_FIELDS
 
     def _poke(self, *args, **kwargs):
         """
