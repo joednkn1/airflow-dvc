@@ -6,7 +6,6 @@ Airflow operator to upload files to DVC.
 from typing import Callable, List, Union
 
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
@@ -17,6 +16,8 @@ from dvc_fs.dvc_download import DVCDownload
 
 Downloads = Union[List[DVCDownload], Callable[..., List[DVCDownload]]]
 
+TEMPLATE_FIELDS = ["files", "templates_dict", "op_args", "op_kwargs"]
+
 
 class DVCDownloadOperator(PythonOperator):
     """
@@ -24,7 +25,7 @@ class DVCDownloadOperator(PythonOperator):
     """
 
     # Fields to apply Airflow templates
-    template_fields = ['files']
+    template_fields = TEMPLATE_FIELDS
 
     dvc_repo: str  # Clone URL for a GIT repo
     files: Downloads  # List of files to be downloaded or function that returns it
@@ -36,7 +37,6 @@ class DVCDownloadOperator(PythonOperator):
             return []
         return self.files
 
-    @apply_defaults
     def __init__(
         self,
         dvc_repo: str,
@@ -63,6 +63,7 @@ class DVCDownloadOperator(PythonOperator):
         if not callable(self.files):
             for file in self.files:
                 file.dvc_repo = dvc_repo
+        self.template_fields = TEMPLATE_FIELDS
 
     def _execute_operator(self, *args, **kwargs) -> DVCDownloadMetadata:
         """

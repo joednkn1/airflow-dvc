@@ -7,7 +7,6 @@ from typing import Callable, List, Optional, Union
 
 import os
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
@@ -18,6 +17,8 @@ from dvc_fs import DVCUpload
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
 
+TEMPLATE_FIELDS = ["files", "commit_message", "temp_path", "templates_dict", "op_args", "op_kwargs"]
+
 
 class DVCUpdateOperator(PythonOperator):
     """
@@ -27,7 +28,7 @@ class DVCUpdateOperator(PythonOperator):
     """
 
     # Fields to apply Airflow templates
-    template_fields = ['files', 'commit_message', 'temp_path']
+    template_fields = TEMPLATE_FIELDS
 
     dvc_repo: str  # Clone URL for a GIT repo
     files: Uploads  # List of files to be uploaded or function that returns it
@@ -40,7 +41,6 @@ class DVCUpdateOperator(PythonOperator):
             return []
         return self.files
 
-    @apply_defaults
     def __init__(
         self,
         dvc_repo: str,
@@ -69,6 +69,7 @@ class DVCUpdateOperator(PythonOperator):
         if not callable(self.files):
             for file in self.files:
                 file.dvc_repo = dvc_repo
+        self.template_fields = TEMPLATE_FIELDS
 
     def _execute_operator(self, *args, **kwargs) -> DVCUpdateMetadata:
         """
