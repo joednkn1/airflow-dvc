@@ -47,7 +47,7 @@ class DVCExistenceSensor(PythonSensor):
         :param files: Files to watch for
         :param dag: DAG object
         """
-        super().__init__(add_log_exception_handler(
+        super().__init__(python_callable=add_log_exception_handler(
             self._poke,
             disable_error_message=disable_error_message,
             ignore_errors=ignore_errors,
@@ -60,8 +60,6 @@ class DVCExistenceSensor(PythonSensor):
         caller = inspect.getouterframes(curframe, 2)[3]
         caller_path = caller.filename.split("/")[-1]
         self.instance_context = f"({caller_path}:{caller.lineno})"
-
-        super(DVCExistenceSensor, self).__init__(*args, **kwargs)
 
     def _poke(self, *args, **kwargs):
         """
