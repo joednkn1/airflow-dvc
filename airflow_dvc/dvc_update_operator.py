@@ -5,16 +5,19 @@ Airflow operator to upload files to DVC.
 """
 from typing import Callable, List, Optional, Union
 
+import os
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.decorators import apply_defaults
 
 from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.dvc_upload import DVCUpload
 from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
 from airflow_dvc.stats import DVCUpdateMetadata
 
+from dvc_fs import DVCUpload
+
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
+
+TEMPLATE_FIELDS = ["files", "commit_message", "temp_path", "templates_dict", "op_args", "op_kwargs"]
 
 
 class DVCUpdateOperator(PythonOperator):
@@ -25,7 +28,7 @@ class DVCUpdateOperator(PythonOperator):
     """
 
     # Fields to apply Airflow templates
-    template_fields = ['files', 'commit_message', 'temp_path']
+    template_fields = TEMPLATE_FIELDS
 
     dvc_repo: str  # Clone URL for a GIT repo
     files: Uploads  # List of files to be uploaded or function that returns it
@@ -38,7 +41,6 @@ class DVCUpdateOperator(PythonOperator):
             return []
         return self.files
 
-    @apply_defaults
     def __init__(
         self,
         dvc_repo: str,
@@ -67,6 +69,7 @@ class DVCUpdateOperator(PythonOperator):
         if not callable(self.files):
             for file in self.files:
                 file.dvc_repo = dvc_repo
+        self.template_fields = TEMPLATE_FIELDS
 
     def _execute_operator(self, *args, **kwargs) -> DVCUpdateMetadata:
         """
@@ -79,11 +82,18 @@ class DVCUpdateOperator(PythonOperator):
         LOGS.dvc_update_operator.info(
             f"Update operator executed for files: {', '.join([file.dvc_path for file in files])}"
         )
+        commit_message = self.commit_message
+        if commit_message is None:
+            file_list_str = ", ".join(
+                [os.path.basename(file.dvc_path) for file in self.files]
+            )
+            commit_message = (
+                f"DVC Automatically updated files: {file_list_str}"
+            )
+        commit_message = f"{commit_message}\ndag: {self.dag_id}"
         meta = dvc.update(
             updated_files=files,
-            dag_id=self.dag_id,
-            commit_message=self.commit_message,
-            temp_path=self.temp_path,
+            commit_message=commit_message,
         )
         LOGS.dvc_update_operator.info("Update completed.")
         return meta

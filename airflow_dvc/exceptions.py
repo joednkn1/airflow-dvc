@@ -5,6 +5,7 @@ Definitions of possible DVC errors
 """
 from typing import Optional, List
 from git import exc
+import traceback
 from semantic_version import Version, SimpleSpec
 from airflow_dvc.logs import LOGS
 
@@ -118,9 +119,11 @@ def add_log_exception_handler(
             return inner_fn(*args, **kwargs)
         except Exception as e:
             if not disable_error_message:
+                error_trace = traceback.format_exc()
                 LOGS.exceptions.error(f"Error was thrown inside the airflow-dvc code. "
                                       f"This is just a useful message to help with Airflow "
-                                      f"pipeline debugging. The error will be reraised. Error message: {e}")
+                                      f"pipeline debugging. The error will be reraised. Error message: {e}."
+                                      f"Error trace: {error_trace}")
             if ignore_errors:
                 return None
             raise e

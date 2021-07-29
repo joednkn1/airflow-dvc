@@ -1,5 +1,5 @@
 """
-Example usage of the DVC sensor in the Airflow DAG.
+Example usage of the DVC update sensor in the Airflow DAG.
 
 @Piotr Styczyński 2021
 """
@@ -13,7 +13,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow_dvc import DVCUpdateSensor
 
 with DAG(
-    "dvc_sensor_example",
+    "dvc_update_sensor_example",
     description="Another tutorial DAG",
     start_date=datetime(2017, 3, 20),
     catchup=False,
