@@ -6,7 +6,7 @@ Airflow operator to upload files to DVC.
 from typing import Callable, List, Optional, Union
 
 import os
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 
 from airflow_dvc.dvc_hook import DVCHook
 from airflow_dvc.logs import LOGS
