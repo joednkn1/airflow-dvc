@@ -27,6 +27,15 @@ include = [
 publish = 'publish:publish'
 airflow_dvc = 'airflow_dvc.cli.entrypoint:run_cli'
 
+[[tool.poetry.source]]
+name = "default_pypi"
+url = "https://pypi.python.org/simple/"
+secondary = true
+
+[[tool.poetry.source]]
+name = "covid_genomics_pypi"
+url = "https://pypi.covidgenomics.com/production/"
+default = true
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -39,7 +48,7 @@ semver = "^2.13.0"
 semantic-version = "^2.8.5"
 toml = "^0.10.2"
 dvc-fs = "^0.7.2"
-dvc = "^2.5.4"
+dvc = {extras = ["s3"], version = "^2.5.4"}
 
 [tool.poetry.extras]
 dvc = ["s3", "dvc>=2.0.18"]
