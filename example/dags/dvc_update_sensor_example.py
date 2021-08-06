@@ -7,24 +7,25 @@ import os
 from datetime import datetime
 
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.dummy import DummyOperator
 
 from airflow_dvc import DVCUpdateSensor
 
 with DAG(
-    "dvc_update_sensor_example",
-    description="Another tutorial DAG",
-    start_date=datetime(2017, 3, 20),
-    catchup=False,
+        "dvc_update_sensor_example",
+        description="Another tutorial DAG",
+        start_date=datetime(2017, 3, 20),
+        catchup=False,
 ) as dag:
+    dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/covid-genomics/private-airflow-dvc"
 
     dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
     sensor_task = DVCUpdateSensor(
         task_id="dvc_sensor_task",
         dag=dag,
-        dvc_repo=os.environ["REPO"],
+        dvc_repo=dvc_url,
         files=["data/1.txt"],
     )
 
