@@ -46,7 +46,7 @@ def test_dvc_update():
         DVCUpdateOperator,
         dvc_repo=dvc_url,
         files=[
-            DVCStringUpload("data/4.txt", f"This will be saved into DVC. Current time 2132131XYZXYZ: {datetime.now()}"),
+            DVCStringUpload("data/4.txt", f"This will be saved into DVC. Current time: {datetime.now()}"),
         ],
     )
 
@@ -69,6 +69,8 @@ def test_dvc_update():
         BashOperator,
         bash_command='echo "OK"',
     )
+
+    
 
 
 if __name__ == '__main__':

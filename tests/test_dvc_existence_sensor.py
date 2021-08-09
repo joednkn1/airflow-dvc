@@ -56,6 +56,7 @@ def test_dvc_existence_sensor():
             bash_command='echo "OK"',
         )
 
+        # Sensor stops executing the dag
         # execute_test_task(
         #     DVCExistenceSensor,
         #     dvc_repo=dvc_url,
