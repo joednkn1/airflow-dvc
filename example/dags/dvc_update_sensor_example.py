@@ -13,10 +13,10 @@ from airflow.operators.dummy import DummyOperator
 from airflow_dvc import DVCUpdateSensor
 
 with DAG(
-        "dvc_update_sensor_example",
-        description="Another tutorial DAG",
-        start_date=datetime(2017, 3, 20),
-        catchup=False,
+    "dvc_update_sensor_example",
+    description="Another tutorial DAG",
+    start_date=datetime(2017, 3, 20),
+    catchup=False,
 ) as dag:
     dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/covid-genomics/private-airflow-dvc"
 

@@ -8,8 +8,13 @@ from flask import Blueprint, request
 from flask_appbuilder import BaseView as AppBuilderBaseView
 from flask_appbuilder import expose
 
-from airflow_dvc import (DVCCommit, DVCDownloadOperator, DVCHook,
-                         DVCUpdateOperator, DVCUpdateSensor)
+from airflow_dvc import (
+    DVCCommit,
+    DVCDownloadOperator,
+    DVCHook,
+    DVCUpdateOperator,
+    DVCUpdateSensor,
+)
 
 from .git_url_parser import parse as parse_git_url
 

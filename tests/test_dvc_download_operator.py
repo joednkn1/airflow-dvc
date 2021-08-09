@@ -9,7 +9,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "helpers"))
 
 from helpers import execute_test_task
 from datetime import datetime
-from airflow_dvc import DVCUpdateOperator, DVCDownloadOperator, DVCStringUpload, DVCPathDownload
+from airflow_dvc import (
+    DVCUpdateOperator,
+    DVCDownloadOperator,
+    DVCStringUpload,
+    DVCPathDownload,
+)
 import os
 
 
@@ -20,7 +25,10 @@ def test_dvc_download():
         DVCUpdateOperator,
         dvc_repo=dvc_url,
         files=[
-            DVCStringUpload("data/3.txt", f"This will be saved into DVC. Current time XYZXYZ: {datetime.now()}"),
+            DVCStringUpload(
+                "data/3.txt",
+                f"This will be saved into DVC. Current time XYZXYZ: {datetime.now()}",
+            ),
         ],
     )
 
@@ -43,5 +51,5 @@ def test_dvc_download():
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_download()

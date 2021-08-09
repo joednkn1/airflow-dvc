@@ -15,7 +15,6 @@ from airflow.version import version
 from airflow_dvc import DVCStringUpload, DVCUpdateOperator
 
 
-
 # Default settings applied to all tasks
 default_args = {
     "owner": "airflow",
@@ -45,4 +44,3 @@ with DAG(
         ],
         task_id="update_dvc",
     )
-

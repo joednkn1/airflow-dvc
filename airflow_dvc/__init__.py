@@ -11,9 +11,17 @@ from . import exceptions
 from . import logs
 from . import stats
 
-from dvc_fs.dvc_download import (DVCCallbackDownload, DVCDownload, DVCPathDownload)
-from dvc_fs.dvc_upload import (DVCCallbackUpload, DVCPathUpload,
-                         DVCStringUpload, DVCUpload)
+from dvc_fs.dvc_download import (
+    DVCCallbackDownload,
+    DVCDownload,
+    DVCPathDownload,
+)
+from dvc_fs.dvc_upload import (
+    DVCCallbackUpload,
+    DVCPathUpload,
+    DVCStringUpload,
+    DVCUpload,
+)
 
 __all__ = [
     "DVCHook",

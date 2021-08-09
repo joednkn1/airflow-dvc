@@ -53,5 +53,5 @@ def test_dvc_existence_sensor_dag_creation_test():
         [task_for_existing_file, task_for_existing_file] >> final_task
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_existence_sensor_dag_creation_test()

@@ -17,7 +17,14 @@ from dvc_fs import DVCUpload
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
 
-TEMPLATE_FIELDS = ["files", "commit_message", "temp_path", "templates_dict", "op_args", "op_kwargs"]
+TEMPLATE_FIELDS = [
+    "files",
+    "commit_message",
+    "temp_path",
+    "templates_dict",
+    "op_args",
+    "op_kwargs",
+]
 
 
 class DVCUpdateOperator(PythonOperator):
@@ -49,7 +56,7 @@ class DVCUpdateOperator(PythonOperator):
         temp_path: Optional[str] = None,
         disable_error_message: bool = False,
         ignore_errors: bool = False,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Creates Airflow upload operator.
@@ -57,11 +64,14 @@ class DVCUpdateOperator(PythonOperator):
         :param dvc_repo: Git clone url for repo with configured DVC
         :param files: Files to be uploaded (please see DVCUpload class for more details)
         """
-        super().__init__(**kwargs, python_callable=add_log_exception_handler(
-            self._execute_operator,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        ))
+        super().__init__(
+            **kwargs,
+            python_callable=add_log_exception_handler(
+                self._execute_operator,
+                disable_error_message=disable_error_message,
+                ignore_errors=ignore_errors,
+            ),
+        )
         self.dvc_repo = dvc_repo
         self.files = files
         self.commit_message = commit_message

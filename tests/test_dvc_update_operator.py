@@ -9,7 +9,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "helpers"))
 
 from datetime import datetime
 from helpers import execute_test_task
-from airflow_dvc import DVCUpdateOperator, DVCPathUpload, DVCStringUpload, DVCCallbackUpload
+from airflow_dvc import (
+    DVCUpdateOperator,
+    DVCPathUpload,
+    DVCStringUpload,
+    DVCCallbackUpload,
+)
 import os
 
 
@@ -46,7 +51,10 @@ def test_dvc_update():
         DVCUpdateOperator,
         dvc_repo=dvc_url,
         files=[
-            DVCStringUpload("data/4.txt", f"This will be saved into DVC. Current time: {datetime.now()}"),
+            DVCStringUpload(
+                "data/4.txt",
+                f"This will be saved into DVC. Current time: {datetime.now()}",
+            ),
         ],
     )
 
@@ -61,7 +69,10 @@ def test_dvc_update():
         files=[
             DVCCallbackUpload("data/6.txt", lambda: 50 * "ok "),
             DVCPathUpload("data/5.txt", "data/random3.txt"),
-            DVCStringUpload("data/4.txt", f"This will be saved into DVC. Current time 2132131XYZXYZ: {datetime.now()}"),
+            DVCStringUpload(
+                "data/4.txt",
+                f"This will be saved into DVC. Current time 2132131XYZXYZ: {datetime.now()}",
+            ),
         ],
     )
 
@@ -70,8 +81,6 @@ def test_dvc_update():
         bash_command='echo "OK"',
     )
 
-    
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_update()

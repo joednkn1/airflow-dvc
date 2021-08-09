@@ -16,10 +16,10 @@ import os
 
 def test_dvc_existence_sensor():
     with DAG(
-            "dvc_existence_sensor_example",
-            description="Existence sensor example",
-            start_date=datetime(2017, 3, 20),
-            catchup=False,
+        "dvc_existence_sensor_example",
+        description="Existence sensor example",
+        start_date=datetime(2017, 3, 20),
+        catchup=False,
     ) as dag:
         dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/covid-genomics/private-airflow-dvc"
 
@@ -64,5 +64,5 @@ def test_dvc_existence_sensor():
         # )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_existence_sensor()

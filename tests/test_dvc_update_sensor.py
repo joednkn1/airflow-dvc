@@ -12,24 +12,35 @@ import random
 from typing import Tuple
 
 from helpers import execute_test_task, generate_string
-from dvc_fs.management.create_dvc_repo_github import \
-    create_github_dvc_temporary_repo_with_s3
+from dvc_fs.management.create_dvc_repo_github import (
+    create_github_dvc_temporary_repo_with_s3,
+)
 
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow_dvc import DVCUpdateOperator, DVCPathUpload, DVCDownloadOperator, DVCStringUpload, DVCPathDownload, \
-    DVCExistenceSensor, DVCUpdateSensor, DVCCallbackDownload, DVCCallbackUpload
+from airflow_dvc import (
+    DVCUpdateOperator,
+    DVCPathUpload,
+    DVCDownloadOperator,
+    DVCStringUpload,
+    DVCPathDownload,
+    DVCExistenceSensor,
+    DVCUpdateSensor,
+    DVCCallbackDownload,
+    DVCCallbackUpload,
+)
+
 # import dvc.api
 import os
 
 
 def test_dvc_update_sensor():
     with DAG(
-            "dvc_existence_sensor_example",
-            description="Existence sensor example",
-            start_date=datetime(2017, 3, 20),
-            catchup=False,
+        "dvc_existence_sensor_example",
+        description="Existence sensor example",
+        start_date=datetime(2017, 3, 20),
+        catchup=False,
     ) as dag:
         dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/covid-genomics/private-airflow-dvc"
 
@@ -37,8 +48,10 @@ def test_dvc_update_sensor():
             DVCUpdateOperator,
             dvc_repo=dvc_url,
             files=[
-                DVCStringUpload("data/4.txt",
-                                f"This will be saved into DVC. Current time 213#@!2131XYZXYZ: {datetime.now()}"),
+                DVCStringUpload(
+                    "data/4.txt",
+                    f"This will be saved into DVC. Current time 213#@!2131XYZXYZ: {datetime.now()}",
+                ),
             ],
         )
 
@@ -50,7 +63,9 @@ def test_dvc_update_sensor():
         execute_test_task(
             DVCUpdateSensor,
             dvc_repo=dvc_url,
-            files=["data/4.txt", ],
+            files=[
+                "data/4.txt",
+            ],
         )
 
         execute_test_task(
@@ -84,7 +99,9 @@ def test_dvc_update_sensor():
             DVCUpdateOperator,
             dvc_repo=dvc_url,
             files=[
-                DVCCallbackUpload("data/6.txt", lambda: random.randint(1,1000) * "ok "),
+                DVCCallbackUpload(
+                    "data/6.txt", lambda: random.randint(1, 1000) * "ok "
+                ),
             ],
         )
 
@@ -100,5 +117,5 @@ def test_dvc_update_sensor():
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_update_sensor()
