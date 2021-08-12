@@ -2,10 +2,7 @@
 from collections import defaultdict
 
 from .platforms import PLATFORMS, PLATFORMS_MAP
-
-import sys
-sys.path.append("..")
-from logs import LOGS
+from airflow_dvc.logs import LOGS
 
 # Possible values to extract from a Git Url
 REQUIRED_ATTRIBUTES = (
@@ -150,7 +147,9 @@ def _parse(url: str, check_domain: bool = True):
 
             # Skip if not matched
             if not match:
-                LOGS.git_url_parser.info(f"GIT url {url} not matched by {regex.pattern} for platform {platform}")
+                LOGS.git_url_parser.info(
+                    f"GIT url {url} not matched by {regex.pattern} for platform {platform}"
+                )
                 continue
 
             # Skip if domain is bad
@@ -160,7 +159,9 @@ def _parse(url: str, check_domain: bool = True):
             LOGS.git_url_parser.info(f"GIT url domain is: {domain}")
             if check_domain:
                 if platform.DOMAINS and not (domain in platform.DOMAINS):
-                    LOGS.git_url_parser.info(f"GIT url domain {domain} not listed in {' ,'.join(platform.DOMAINS)}")
+                    LOGS.git_url_parser.info(
+                        f"GIT url domain {domain} not listed in {' ,'.join(platform.DOMAINS)}"
+                    )
                     continue
 
             # Get matches as dictionary

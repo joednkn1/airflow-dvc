@@ -15,7 +15,7 @@ class DVCS3Download(DVCDownload):
     """
 
     # Fields to apply Airflow templates
-    template_fields = ['dvc_path', 'bucket_name', 'bucket_path']
+    template_fields = ["dvc_path", "bucket_name", "bucket_path"]
 
     # Connection ID (the same as for Airflow S3Hook)
     # For more details please see:

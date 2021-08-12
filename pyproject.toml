@@ -29,7 +29,7 @@ airflow_dvc = 'airflow_dvc.cli.entrypoint:run_cli'
 
 
 [tool.poetry.dependencies]
-python = ">=3.8 <3.10"
+python = "^3.8"
 SQLAlchemy = "<1.4.0"
 GitPython = "^3.1.14"
 apache-airflow = ">=2.0.0"

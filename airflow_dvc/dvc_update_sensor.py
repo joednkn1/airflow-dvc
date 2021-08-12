@@ -9,9 +9,9 @@ from typing import List
 from airflow.models.dagrun import DagRun
 from airflow.sensors.python import PythonSensor
 
-from dvc_hook import DVCHook
-from logs import LOGS
-from exceptions import add_log_exception_handler
+from airflow_dvc.dvc_hook import DVCHook
+from airflow_dvc.logs import LOGS
+from airflow_dvc.exceptions import add_log_exception_handler
 
 TEMPLATE_FIELDS = ["templates_dict", "op_args", "op_kwargs", "files"]
 
@@ -47,11 +47,14 @@ class DVCUpdateSensor(PythonSensor):
         :param files: Files to watch for
         :param dag: DAG object
         """
-        super().__init__(**kwargs, python_callable=add_log_exception_handler(
-            self._poke,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        ))
+        super().__init__(
+            **kwargs,
+            python_callable=add_log_exception_handler(
+                self._poke,
+                disable_error_message=disable_error_message,
+                ignore_errors=ignore_errors,
+            ),
+        )
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
@@ -79,9 +82,7 @@ class DVCUpdateSensor(PythonSensor):
                 f"Current date = {last_start_date} vs. file modified date {dvc.modified_date(file)}"
             )
             if dvc.modified_date(file) >= last_start_date:
-                LOGS.dvc_update_sensor.info(
-                    "DVC sensor is active."
-                )
+                LOGS.dvc_update_sensor.info("DVC sensor is active.")
                 update = True
                 break
         return update
