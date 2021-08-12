@@ -48,4 +48,4 @@ __all__ = [
     "execute_test_task",
 ]
 
-__version__ = "1.9.8"
+__version__ = "1.9.9"
