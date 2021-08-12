@@ -4,12 +4,19 @@
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
 
-<a href="https://covidgenomics.com/">
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
-</a>
+[![Airflow image](https://covidgenomics.com/images/blogs/airflow_dvc/blog_image.png)](https://covidgenomics.com/blog/airflow_dvc/)
 
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
+The basic tutorial about DVC and Airflow can be found on [Covid Genomics website in the News section here](https://covidgenomics.com/blog/airflow_dvc/).
+The motivation for such a package was to create modern automated data science pipelines that operates on versioned data.
+
+This package is a Covid Genomics contribution to the opensource community.
+We try to fight the SARS-Cov-2 pandemic and develop tools to support biotech industry in this fight at the same time
+we care about sharing our knowledge wherever it's possible.
+
+You can feel invited to contribute to the project and other opensource code
+we distribute.
 
 ## Installation
 

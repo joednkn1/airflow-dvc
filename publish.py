@@ -1,4 +1,3 @@
-
 """
 Script to publish Python package.
 Run via "poetry run publish"

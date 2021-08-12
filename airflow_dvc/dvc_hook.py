@@ -7,9 +7,10 @@ import datetime
 from dataclasses import dataclass
 from typing import Any, List, Optional
 
+from dvc_fs import Client as DVCClient
+
 from airflow.hooks.base import BaseHook
 from airflow.models.dag import DAG
-from dvc_fs import Client as DVCClient
 
 
 @dataclass

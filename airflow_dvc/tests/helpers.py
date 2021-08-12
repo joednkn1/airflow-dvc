@@ -1,8 +1,9 @@
 import os
-from airflow import DAG
-from airflow.models import TaskInstance, BaseOperator
 from datetime import datetime
 from random import choices
+
+from airflow import DAG
+from airflow.models import BaseOperator, TaskInstance
 
 OS_ENV = dict(GIT_TOKEN="", SLACK_TOKEN="", REPO="")
 

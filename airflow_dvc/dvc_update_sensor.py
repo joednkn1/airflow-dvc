@@ -8,10 +8,9 @@ from typing import List
 
 from airflow.models.dagrun import DagRun
 from airflow.sensors.python import PythonSensor
-
 from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
+from airflow_dvc.logs import LOGS
 
 TEMPLATE_FIELDS = ["templates_dict", "op_args", "op_kwargs", "files"]
 
