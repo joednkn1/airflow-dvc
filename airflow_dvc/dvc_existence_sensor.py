@@ -47,11 +47,14 @@ class DVCExistenceSensor(PythonSensor):
         :param files: Files to watch for
         :param dag: DAG object
         """
-        super().__init__(**kwargs, python_callable=add_log_exception_handler(
-            self._poke,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        ))
+        super().__init__(
+            **kwargs,
+            python_callable=add_log_exception_handler(
+                self._poke,
+                disable_error_message=disable_error_message,
+                ignore_errors=ignore_errors,
+            ),
+        )
         self.dag_name = dag.dag_id
         self.dvc_repo = dvc_repo
         self.files = files
@@ -73,8 +76,12 @@ class DVCExistenceSensor(PythonSensor):
         # Check if given input files exist
         for file in files:
             if not dvc.exists(file):
-                LOGS.dvc_existence_sensor.info(f"File {file} does not exist (sensor will wait)")
+                LOGS.dvc_existence_sensor.info(
+                    f"File {file} does not exist (sensor will wait)"
+                )
                 # File do not exist so we do not proceed
                 return False
-        LOGS.dvc_existence_sensor.info(f"All files ({', '.join(files)}) exist so sensor will continue.")
+        LOGS.dvc_existence_sensor.info(
+            f"All files ({', '.join(files)}) exist so sensor will continue."
+        )
         return True

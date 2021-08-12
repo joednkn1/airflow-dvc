@@ -13,6 +13,7 @@ class DVCUpdateMetadata:
     """
     Additional information about performed update operation
     """
+
     dvc_repo: str
     dvc_files_updated: List[str]
     dvc_files_update_requested: List[str]
@@ -29,8 +30,8 @@ class DVCDownloadMetadata:
     """
     Additional information about the performed download operation
     """
+
     dvc_repo: str
     downloaded_dvc_files: List[str]
     downloaded_dvc_files_sizes: List[int]
     duration: time.time
-
