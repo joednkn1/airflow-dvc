@@ -1,7 +1,10 @@
+import os
 from airflow import DAG
 from airflow.models import TaskInstance, BaseOperator
 from datetime import datetime
 from random import choices
+
+OS_ENV = dict(GIT_TOKEN="", SLACK_TOKEN="", REPO="")
 
 
 def execute_test_task(operator: BaseOperator, *args, **kwargs):
@@ -12,3 +15,7 @@ def execute_test_task(operator: BaseOperator, *args, **kwargs):
     result = task.prepare_for_execution().execute(ti.get_template_context())
     return result
 
+
+def fake_env():
+    for key in OS_ENV:
+        os.environ[key] = OS_ENV[key]
