@@ -7,11 +7,15 @@ from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint, request
 from flask_appbuilder import BaseView as AppBuilderBaseView
 from flask_appbuilder import expose
-
-from airflow_dvc import (DVCCommit, DVCDownloadOperator, DVCHook,
-                         DVCUpdateOperator, DVCUpdateSensor)
-
 from .git_url_parser import parse as parse_git_url
+
+import sys
+
+sys.path.append("..")
+from dvc_hook import DVCHook, DVCCommit
+from dvc_update_operator import DVCUpdateOperator
+from dvc_update_sensor import DVCUpdateSensor
+from dvc_download_operator import DVCDownloadOperator
 
 AnyDVCOperator = Union[DVCDownloadOperator, DVCUpdateOperator, DVCUpdateSensor]
 
@@ -39,9 +43,9 @@ class AppBuilderDVCPushesView(AppBuilderBaseView):
         for dag in DagBag().dags.values():
             for task in dag.tasks:
                 if (
-                    isinstance(task, DVCDownloadOperator)
-                    or isinstance(task, DVCUpdateOperator)
-                    or isinstance(task, DVCUpdateSensor)
+                        isinstance(task, DVCDownloadOperator)
+                        or isinstance(task, DVCUpdateOperator)
+                        or isinstance(task, DVCUpdateSensor)
                 ):
                     setattr(task, "dag", dag)
                     operators.append(task)
@@ -81,9 +85,9 @@ class AppBuilderDVCTargetsView(AppBuilderBaseView):
         for dag in DagBag().dags.values():
             for task in dag.tasks:
                 if (
-                    isinstance(task, DVCDownloadOperator)
-                    or isinstance(task, DVCUpdateOperator)
-                    or isinstance(task, DVCUpdateSensor)
+                        isinstance(task, DVCDownloadOperator)
+                        or isinstance(task, DVCUpdateOperator)
+                        or isinstance(task, DVCUpdateSensor)
                 ):
                     setattr(task, "dag", dag)
                     operators.append(task)
@@ -118,12 +122,12 @@ class AppBuilderDVCTargetsView(AppBuilderBaseView):
                     dvc_diagram_free_id += 1
                 add = False
                 if isinstance(
-                    operator, DVCUpdateOperator
+                        operator, DVCUpdateOperator
                 ) and operator_type in ["all", "uploads"]:
                     dvc_diagram_edges[dag_node_id].add(target_node_id)
                     add = True
                 elif isinstance(
-                    operator, DVCDownloadOperator
+                        operator, DVCDownloadOperator
                 ) and operator_type in ["all", "downloads"]:
                     dvc_diagram_edges[target_node_id].add(dag_node_id)
                     add = True

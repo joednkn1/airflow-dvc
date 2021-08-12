@@ -8,9 +8,9 @@ from typing import Callable, List, Optional, Union
 
 from airflow.sensors.python import PythonSensor
 
-from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.logs import LOGS
-from airflow_dvc.exceptions import add_log_exception_handler
+from dvc_hook import DVCHook
+from logs import LOGS
+from exceptions import add_log_exception_handler
 
 FileListLike = Union[List[str], Callable[..., List[str]]]
 

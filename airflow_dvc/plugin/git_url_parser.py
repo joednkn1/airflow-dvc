@@ -2,7 +2,10 @@
 from collections import defaultdict
 
 from .platforms import PLATFORMS, PLATFORMS_MAP
-from airflow_dvc.logs import LOGS
+
+import sys
+sys.path.append("..")
+from logs import LOGS
 
 # Possible values to extract from a Git Url
 REQUIRED_ATTRIBUTES = (

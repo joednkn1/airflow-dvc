@@ -7,7 +7,7 @@ from typing import Optional, List
 from git import exc
 import traceback
 from semantic_version import Version, SimpleSpec
-from airflow_dvc.logs import LOGS
+from logs import LOGS
 
 
 class DVCFileMissingError(FileNotFoundError):
