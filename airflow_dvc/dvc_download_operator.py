@@ -7,10 +7,10 @@ from typing import Callable, List, Union
 
 from airflow.operators.python import PythonOperator
 
-from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.logs import LOGS
-from airflow_dvc.exceptions import add_log_exception_handler
-from airflow_dvc.stats import DVCDownloadMetadata
+from dvc_hook import DVCHook
+from logs import LOGS
+from exceptions import add_log_exception_handler
+from stats import DVCDownloadMetadata
 
 from dvc_fs.dvc_download import DVCDownload
 
