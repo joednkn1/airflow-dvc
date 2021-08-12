@@ -7,14 +7,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.python_operator import PythonOperator
-from airflow.version import version
-
 from airflow_dvc import DVCStringUpload, DVCUpdateOperator
-
-
 
 # Default settings applied to all tasks
 default_args = {
@@ -40,9 +33,9 @@ with DAG(
         files=[
             DVCStringUpload(
                 "data/{{ yesterday_ds_nodash }}.txt",
-                f"This is jinja Airflow template. DAG date: {{ yesterday_ds_nodash }}",
+                "This is jinja Airflow template. "
+                "DAG date: {{ yesterday_ds_nodash }}",
             ),
         ],
         task_id="update_dvc",
     )
-

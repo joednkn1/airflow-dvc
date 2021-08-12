@@ -4,13 +4,12 @@ Airflow sensor to wait for DVC files changes.
 @Piotr Styczyński 2021
 """
 import inspect
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Union
 
 from airflow.sensors.python import PythonSensor
-
 from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.logs import LOGS
 from airflow_dvc.exceptions import add_log_exception_handler
+from airflow_dvc.logs import LOGS
 
 FileListLike = Union[List[str], Callable[..., List[str]]]
 

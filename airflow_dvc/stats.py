@@ -3,9 +3,9 @@ Definitions of metadata containers that represent information about operator exe
 
 @Piotr Styczyński 2021
 """
+import time
 from dataclasses import dataclass
 from typing import List, Optional
-import time
 
 
 @dataclass(frozen=True)

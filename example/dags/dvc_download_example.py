@@ -7,9 +7,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-
 from airflow_dvc import DVCDownloadOperator, DVCPathDownload
-
 
 # Default settings applied to all tasks
 default_args = {
@@ -35,7 +33,7 @@ with DAG(
         files=[
             DVCPathDownload(
                 "non_existing_path/data.txt",
-                f"output_file.txt",
+                "output_file.txt",
             ),
         ],
         task_id="download_task",
