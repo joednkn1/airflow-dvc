@@ -60,4 +60,3 @@ class DVCHook(DVCClient, BaseHook):
         """
         # TODO: Rewrite functionality here using dvc-fs
         return []
-

@@ -11,4 +11,3 @@ def execute_test_task(operator: BaseOperator, *args, **kwargs):
     ti = TaskInstance(task=task, execution_date=datetime.now())
     result = task.prepare_for_execution().execute(ti.get_template_context())
     return result
-

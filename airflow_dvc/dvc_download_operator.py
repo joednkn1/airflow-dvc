@@ -29,7 +29,7 @@ class DVCDownloadOperator(PythonOperator):
 
     dvc_repo: str  # Clone URL for a GIT repo
     files: Downloads  # List of files to be downloaded or function that returns it
-    empty_fallback: bool # Create empty file if it does not exists remotely
+    empty_fallback: bool  # Create empty file if it does not exists remotely
 
     @property
     def affected_files(self) -> List[DVCDownload]:
@@ -52,11 +52,14 @@ class DVCDownloadOperator(PythonOperator):
         :param dvc_repo: Git clone url for repo with configured DVC
         :param files: Files to be downloaded (please see DVCDownload class for more details)
         """
-        super().__init__(**kwargs, python_callable=add_log_exception_handler(
-            self._execute_operator,
-            disable_error_message=disable_error_message,
-            ignore_errors=ignore_errors,
-        ))
+        super().__init__(
+            **kwargs,
+            python_callable=add_log_exception_handler(
+                self._execute_operator,
+                disable_error_message=disable_error_message,
+                ignore_errors=ignore_errors,
+            ),
+        )
         self.dvc_repo = dvc_repo
         self.empty_fallback = empty_fallback
         self.files = files
