@@ -1,4 +1,4 @@
-# Airflow DVC (1.9.9) 
+# Airflow DVC (1.9.9) [![Sponsor project](https://user-images.githubusercontent.com/4967343/89290185-5e893700-d650-11ea-8942-4579b2c96c2c.png)](https://github.com/sponsors/styczynski)
 
 [![Build and test](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml/badge.svg)](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
