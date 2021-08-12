@@ -1,14 +1,14 @@
-# Airflow DVC (1.9.9)
+# Airflow DVC (1.9.9) 
 
+[![Build and test](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml/badge.svg)](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
-
-
-This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
 <a href="https://covidgenomics.com/">
 <img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/cg_logo.png?raw=true" width="200px"/>
 </a>
+
+This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
 
 ## Installation
