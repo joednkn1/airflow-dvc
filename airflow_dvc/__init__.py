@@ -63,4 +63,4 @@ __all__ = [
     "DVCDownloadMetadata",
 ]
 
-__version__ = "1.9.9"
+__version__ = "1.9.8"
