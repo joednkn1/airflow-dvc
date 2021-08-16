@@ -7,6 +7,7 @@ from .dvc_existence_sensor import DVCExistenceSensor
 from .custom_uploads import DVCS3Upload
 from .custom_downloads import DVCS3Download
 from .plugin import DVCPlugin
+from .test_utils import execute_test_task
 from . import exceptions
 from . import logs
 from . import stats
@@ -44,6 +45,7 @@ __all__ = [
     "exceptions",
     "logs",
     "stats",
+    "execute_test_task",
 ]
 
 __version__ = "1.9.8"

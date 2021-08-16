@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 
 import os
-import sys
-
 from airflow.operators.bash import BashOperator
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "helpers"))
-
 from datetime import datetime
-from helpers import execute_test_task
 from airflow_dvc import (
     DVCUpdateOperator,
     DVCPathUpload,
     DVCStringUpload,
     DVCCallbackUpload,
+    execute_test_task,
 )
-import os
 
 
 def test_dvc_update():
@@ -71,7 +65,7 @@ def test_dvc_update():
             DVCPathUpload("data/5.txt", "data/random3.txt"),
             DVCStringUpload(
                 "data/4.txt",
-                f"This will be saved into DVC. Current time 2132131XYZXYZ: {datetime.now()}",
+                f"This will be saved into DVC. Current time: {datetime.now()}",
             ),
         ],
     )

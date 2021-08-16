@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-import sys
-
 from airflow.operators.bash import BashOperator
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "helpers"))
-
-from helpers import execute_test_task
+from airflow_dvc import execute_test_task
 from datetime import datetime
 from airflow import DAG
 from airflow_dvc import DVCExistenceSensor
-import os
 
 
 def test_dvc_existence_sensor():
