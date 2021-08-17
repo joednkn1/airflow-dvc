@@ -1,5 +1,0 @@
-[core]
-    remote = storage
-['remote "storage"']
-    url = s3://covid-genomics-dvc/testing-dvc
-    region = eu-central-1

@@ -23,14 +23,13 @@ def test_dvc_update_sensor():
         "covid-genomics", "temporary_dvc_repo"
     )
     with repo as fs:
+        dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/{repo.owner}/{repo.repo_name}"
         with DAG(
-            "dvc_existence_sensor_example",
-            description="Existence sensor example",
-            start_date=datetime(2017, 3, 20),
-            catchup=False,
+                "dvc_existence_sensor_example",
+                description="Existence sensor example",
+                start_date=datetime(2017, 3, 20),
+                catchup=False,
         ) as dag:
-            dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/{repo.owner}/{repo.repo_name}"
-
             execute_test_task(
                 DVCUpdateOperator,
                 dvc_repo=dvc_url,
