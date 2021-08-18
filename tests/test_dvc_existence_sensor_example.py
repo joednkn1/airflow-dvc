@@ -19,7 +19,6 @@ def test_dvc_existence_sensor_dag_creation_test():
     )
     with repo as fs:
         dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/{repo.owner}/{repo.repo_name}"
-        print("OK OK")
         with DAG(
                 "dvc_download_test",
                 description="Existence sensor example",

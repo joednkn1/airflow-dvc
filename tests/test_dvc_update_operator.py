@@ -69,16 +69,15 @@ def test_dvc_update():
             ],
         )
 
-        for i in range(1, 2):
-            execute_test_task(
-                DVCDownloadOperator,
-                dvc_repo=dvc_url,
-                files=[
-                    DVCPathDownload(f"data/update_file{i}.txt", f"data/update_test{i}.txt"),
-                ],
-            )
+        execute_test_task(
+            DVCDownloadOperator,
+            dvc_repo=dvc_url,
+            files=[
+                DVCPathDownload(f"data/update_file1.txt", f"data/update_test1.txt"),
+            ],
+        )
 
-            assert filecmp.cmp(f'data/update_sample{i}.txt', f'data/update_test{i}.txt')
+        assert filecmp.cmp(f'data/update_sample1.txt', f'data/update_test1.txt')
 
         execute_test_task(
             BashOperator,
