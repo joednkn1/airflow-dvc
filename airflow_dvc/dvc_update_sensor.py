@@ -81,6 +81,9 @@ class DVCUpdateSensor(PythonSensor):
             else time.now()
         )
 
+        if length == 0:
+            LOGS.dvc_update_sensor.info(f"There is no running DAG, used time.now() as a date of the last DAG start.")
+
         update = False
         dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
