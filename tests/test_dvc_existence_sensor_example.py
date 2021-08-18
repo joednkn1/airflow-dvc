@@ -3,8 +3,9 @@ Example usage of the DVC existence sensor in the Airflow DAG.
 
 @Piotr Styczyński 2021
 """
+import os
 from datetime import datetime
-
+from dvc_fs.management.create_dvc_repo_github import create_github_dvc_temporary_repo_with_s3
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
@@ -16,9 +17,6 @@ def test_dvc_existence_sensor_dag_creation_test():
     repo = create_github_dvc_temporary_repo_with_s3(
         "covid-genomics", "temporary_dvc_repo"
     )
-    default_args = {
-        "owner": "airflow",
-    }
     with repo as fs:
         dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/{repo.owner}/{repo.repo_name}"
         print("OK OK")

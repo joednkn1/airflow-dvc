@@ -32,14 +32,14 @@ class DVCUpdateSensor(PythonSensor):
     template_fields = TEMPLATE_FIELDS
 
     def __init__(
-        self,
-        dvc_repo: str,
-        files: List[str],
-        dag,
-        disable_error_message: bool = False,
-        ignore_errors: bool = False,
-        *args,
-        **kwargs,
+            self,
+            dvc_repo: str,
+            files: List[str],
+            dag,
+            disable_error_message: bool = False,
+            ignore_errors: bool = False,
+            *args,
+            **kwargs,
     ):
         """
         Airflow sensor will compare timestamp of the current DAG run and the paths of files
@@ -85,35 +85,37 @@ class DVCUpdateSensor(PythonSensor):
         dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
         for file in self.files:
-            print(file)
-            modified_date = dvc.modified_date([file,]) - datetime.timedelta(
-                minutes=dvc.modified_date(
-                    [
-                        file,
-                    ]
-                ).minute
-                % 1,
-                seconds=dvc.modified_date(
-                    [
-                        file,
-                    ]
-                ).second,
-                microseconds=dvc.modified_date(
-                    [
-                        file,
-                    ]
-                ).microsecond,
-            )
-            last_start_date -= datetime.timedelta(
-                minutes=last_start_date.minute % 1,
-                seconds=last_start_date.second,
-                microseconds=last_start_date.microsecond,
-            )
-            LOGS.dvc_update_sensor.info(
-                f"Current date = {last_start_date} vs. file modified date {modified_date}"
-            )
-            if modified_date >= last_start_date:
-                LOGS.dvc_update_sensor.info("DVC sensor is active.")
-                update = True
-                break
+            if file in dvc.list_files():
+                modified_date = dvc.modified_date([file, ]) - datetime.timedelta(
+                    minutes=dvc.modified_date(
+                        [
+                            file,
+                        ]
+                    ).minute
+                            % 10,
+                    seconds=dvc.modified_date(
+                        [
+                            file,
+                        ]
+                    ).second,
+                    microseconds=dvc.modified_date(
+                        [
+                            file,
+                        ]
+                    ).microsecond,
+                )
+                last_start_date -= datetime.timedelta(
+                    minutes=last_start_date.minute % 10,
+                    seconds=last_start_date.second,
+                    microseconds=last_start_date.microsecond,
+                )
+                LOGS.dvc_update_sensor.info(
+                    f"Current date = {last_start_date} vs. file modified date {modified_date}"
+                )
+                if modified_date >= last_start_date:
+                    LOGS.dvc_update_sensor.info("DVC sensor is active.")
+                    update = True
+                    break
+            else:
+                LOGS.dvc_update_sensor.info(f"Cannot find a file: {file}, waiting for upload.")
         return update
