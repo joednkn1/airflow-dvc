@@ -32,14 +32,14 @@ class DVCUpdateSensor(PythonSensor):
     template_fields = TEMPLATE_FIELDS
 
     def __init__(
-            self,
-            dvc_repo: str,
-            files: List[str],
-            dag,
-            disable_error_message: bool = False,
-            ignore_errors: bool = False,
-            *args,
-            **kwargs,
+        self,
+        dvc_repo: str,
+        files: List[str],
+        dag,
+        disable_error_message: bool = False,
+        ignore_errors: bool = False,
+        *args,
+        **kwargs,
     ):
         """
         Airflow sensor will compare timestamp of the current DAG run and the paths of files
@@ -75,27 +75,24 @@ class DVCUpdateSensor(PythonSensor):
         length = len(dag_runs)
         # Query the latest start date of the DAG
 
-        last_start_date = (
-            dag_runs[length - 1].start_date.replace(tzinfo=None)
-            if length != 0
-            else time.now()
-        )
-
-        if length == 0:
-            LOGS.dvc_update_sensor.info(f"There is no running DAG, used time.now() as a date of the last DAG start.")
+        last_start_date = dag_runs[length - 1].start_date.replace(tzinfo=None)
 
         update = False
         dvc = DVCHook(self.dvc_repo)
         # Check modification dates of the given files
         for file in self.files:
             if file in dvc.list_files():
-                modified_date = dvc.modified_date([file, ]) - datetime.timedelta(
+                modified_date = dvc.modified_date(
+                    [
+                        file,
+                    ]
+                ) - datetime.timedelta(
                     minutes=dvc.modified_date(
                         [
                             file,
                         ]
                     ).minute
-                            % 10,
+                    % 10,
                     seconds=dvc.modified_date(
                         [
                             file,
@@ -120,5 +117,7 @@ class DVCUpdateSensor(PythonSensor):
                     update = True
                     break
             else:
-                LOGS.dvc_update_sensor.info(f"Cannot find a file: {file}, waiting for upload.")
+                LOGS.dvc_update_sensor.info(
+                    f"Cannot find a file: {file}, waiting for upload."
+                )
         return update

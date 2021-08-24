@@ -12,7 +12,9 @@ from airflow_dvc import (
     DVCPathDownload,
     execute_test_task,
 )
-from dvc_fs.management.create_dvc_repo_github import create_github_dvc_temporary_repo_with_s3
+from dvc_fs.management.create_dvc_repo_github import (
+    create_github_dvc_temporary_repo_with_s3,
+)
 
 
 def test_dvc_download():
@@ -22,11 +24,11 @@ def test_dvc_download():
     with repo as fs:
         dvc_url = f"https://{os.environ['DVC_GITHUB_REPO_TOKEN']}@github.com/{repo.owner}/{repo.repo_name}"
 
-        with open('data/file1.txt', 'w') as file1:
+        with open("data/file1.txt", "w") as file1:
             file1.write(random.randint(1, 100) * "DOWNLOAD TEST ")
 
-        with open('data/file1.txt', 'r') as file1:
-            fs.writetext('data/file1.txt', file1.read())
+        with open("data/file1.txt", "r") as file1:
+            fs.writetext("data/file1.txt", file1.read())
 
         execute_test_task(
             DVCDownloadOperator,
@@ -36,7 +38,7 @@ def test_dvc_download():
             ],
         )
 
-        assert filecmp.cmp('data/file1.txt', 'data/download_test1.txt')
+        assert filecmp.cmp("data/file1.txt", "data/download_test1.txt")
 
         execute_test_task(
             BashOperator,
@@ -44,5 +46,5 @@ def test_dvc_download():
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_dvc_download()
