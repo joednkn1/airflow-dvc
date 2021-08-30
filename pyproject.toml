@@ -32,13 +32,14 @@ airflow_dvc = 'airflow_dvc.cli.entrypoint:run_cli'
 python = "^3.8"
 SQLAlchemy = "<1.4.0"
 GitPython = "^3.1.14"
-apache-airflow = ">=2.0.0"
+apache-airflow = "^2.1.0"
 apache-airflow-providers-amazon = "^1.3.0"
 typer = "^0.3.2"
 semver = "^2.13.0"
 semantic-version = "^2.8.5"
 toml = "^0.10.2"
-dvc-fs = "^0.7.2"
+dvc = { extras = ["s3"], version = "^2.5.4" }
+dvc-fs = "^0.7.3"
 
 [tool.poetry.extras]
 dvc = ["s3", "dvc>=2.0.18"]

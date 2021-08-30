@@ -4,7 +4,6 @@ Example usage of the DVC existence sensor in the Airflow DAG.
 @Piotr Styczyński 2021
 """
 from datetime import datetime
-
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
@@ -19,7 +18,6 @@ def test_dvc_existence_sensor_dag_creation_test():
         start_date=datetime(2017, 3, 20),
         catchup=False,
     ) as dag:
-
         dummy_task = DummyOperator(task_id="dummy_task", dag=dag)
 
         sensor_task_missing = DVCExistenceSensor(
