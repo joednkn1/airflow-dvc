@@ -3,17 +3,16 @@ Airflow operator to upload files to DVC.
 
 @Piotr Styczyński 2021
 """
+import os
 from typing import Callable, List, Optional, Union
 
-import os
-from airflow.operators.python_operator import PythonOperator
-
-from airflow_dvc.dvc_hook import DVCHook
-from airflow_dvc.logs import LOGS
-from airflow_dvc.exceptions import add_log_exception_handler
-from airflow_dvc.stats import DVCUpdateMetadata
-
 from dvc_fs import DVCUpload
+
+from airflow.operators.python_operator import PythonOperator
+from airflow_dvc.dvc_hook import DVCHook
+from airflow_dvc.exceptions import add_log_exception_handler
+from airflow_dvc.logs import LOGS
+from airflow_dvc.stats import DVCUpdateMetadata
 
 Uploads = Union[List[DVCUpload], Callable[..., List[DVCUpload]]]
 

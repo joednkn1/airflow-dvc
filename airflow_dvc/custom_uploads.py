@@ -2,9 +2,11 @@
 Abstraction for DVC upload sources.
 @Piotr Styczyński 2021
 """
-from dvc_fs.dvc_upload import DVCUpload
-from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from io import StringIO
+
+from dvc_fs.dvc_upload import DVCUpload
+
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 
 class DVCS3Upload(DVCUpload):
