@@ -1,7 +1,8 @@
-from airflow import DAG
-from airflow.models import TaskInstance, BaseOperator
 from datetime import datetime
 from random import choices
+
+from airflow import DAG
+from airflow.models import BaseOperator, TaskInstance
 
 
 def execute_test_task(operator: BaseOperator, *args, **kwargs):

@@ -1,0 +1,34 @@
+name: Lint code
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Apply netrc creds with direct input again
+        uses: little-core-labs/netrc-creds@master
+        with:
+          machine: "pypi.covidgenomics.com"
+          login: "pstyczynski"
+          password: "y\\)Yup~f1&s-B9G6kmIR.hOAZ1,!6.wa"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+          virtualenvs-in-project: false
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+      - name: Install project
+        run: poetry install --no-interaction
+      - name: Lint project
+        run: |
+          make lint
