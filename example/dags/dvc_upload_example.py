@@ -11,7 +11,6 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 from airflow.version import version
-
 from airflow_dvc import DVCStringUpload, DVCUpdateOperator
 
 

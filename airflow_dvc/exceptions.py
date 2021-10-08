@@ -3,10 +3,12 @@ Definitions of possible DVC errors
 
 @Piotr Styczyński 2021
 """
-from typing import Optional, List
-from git import exc
 import traceback
-from semantic_version import Version, SimpleSpec
+from typing import List, Optional
+
+from git import exc
+from semantic_version import SimpleSpec, Version
+
 from airflow_dvc.logs import LOGS
 
 

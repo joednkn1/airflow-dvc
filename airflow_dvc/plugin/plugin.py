@@ -2,19 +2,14 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Set, Union
 
-from airflow.models.dagbag import DagBag
-from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint, request
 from flask_appbuilder import BaseView as AppBuilderBaseView
 from flask_appbuilder import expose
 
-from airflow_dvc import (
-    DVCCommit,
-    DVCDownloadOperator,
-    DVCHook,
-    DVCUpdateOperator,
-    DVCUpdateSensor,
-)
+from airflow.models.dagbag import DagBag
+from airflow.plugins_manager import AirflowPlugin
+from airflow_dvc import (DVCCommit, DVCDownloadOperator, DVCHook,
+                         DVCUpdateOperator, DVCUpdateSensor)
 
 from .git_url_parser import parse as parse_git_url
 

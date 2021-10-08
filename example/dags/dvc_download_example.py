@@ -7,14 +7,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.operators.dummy import DummyOperator
-from airflow.operators.python import PythonOperator
-from airflow.version import version
-
-from airflow_dvc import DVCStringUpload, DVCUpdateOperator
-
-
+from airflow_dvc import DVCDownloadOperator, DVCPathDownload
 
 # Default settings applied to all tasks
 default_args = {
@@ -28,21 +21,21 @@ default_args = {
 
 # Using a DAG context manager, you don't have to specify the dag property of each task
 with DAG(
-    "dvc_upload_with_template_example",
+    "dvc_download_example",
     start_date=datetime(2019, 1, 1),
     max_active_runs=1,
     default_args=default_args,
     catchup=False,
 ) as dag:
 
-    upload_task = DVCUpdateOperator(
+    download_task = DVCDownloadOperator(
         dvc_repo=os.environ["REPO"],
         files=[
-            DVCStringUpload(
-                "data/{{ yesterday_ds_nodash }}.txt",
-                f"This is jinja Airflow template. DAG date: {{ yesterday_ds_nodash }}",
+            DVCPathDownload(
+                "non_existing_path/data.txt",
+                "output_file.txt",
             ),
         ],
-        task_id="update_dvc",
+        task_id="download_task",
+        empty_fallback=True,
     )
-
