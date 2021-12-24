@@ -1,0 +1,21 @@
+{
+    "cluster_deployments": [],
+    "dependencies": {},
+    "devDependencies": {},
+    "name": "airflow-dvc",
+    "private": false,
+    "scripts": {
+        "build": "poetry build",
+        "build:package": "yarn run build",
+        "clean": "rm -rfd dist",
+        "configure": "poetry config --local virtualenvs.in-project true && poetry config --local virtualenvs.path $(pwd)/.venv",
+        "dependencies:install": "poetry install",
+        "dependencies:update": "poetry update",
+        "deploy": "poetry run python3 publish.py",
+        "deploy:package": "yarn run deploy",
+        "lint": "poetry run black . && poetry run isort . && poetry run flakehell lint",
+        "test": "poetry run pytest -n 4",
+        "version:bump": "poetry run bump2version --no-tag patch"
+    },
+    "version": "1.9.9"
+}
