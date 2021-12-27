@@ -15,7 +15,7 @@
         "deploy:package": "yarn run deploy",
         "lint": "poetry run black . && poetry run isort . && poetry run flakehell lint",
         "test": "poetry run pytest -n 4",
-        "version:bump": "poetry run bump2version --no-tag patch"
+        "version:bump": "poetry run bump2version --no-tag --no-commit patch"
     },
     "version": "1.9.9"
 }
