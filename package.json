@@ -11,7 +11,7 @@
         "configure": "poetry config --local virtualenvs.in-project true && poetry config --local virtualenvs.path $(pwd)/.venv",
         "dependencies:install": "poetry install",
         "dependencies:update": "poetry update",
-        "deploy": "poetry run python3 publish.py",
+        "deploy": "poetry run publish",
         "deploy:package": "yarn run deploy",
         "lint": "poetry run black . && poetry run isort . && poetry run flakehell lint",
         "test": "poetry run pytest -n 4",

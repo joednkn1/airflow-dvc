@@ -13,7 +13,7 @@ test:
 	poetry run pytest -n 4
 
 publish:
-	poetry build && poetry run s3pypi --bucket pypi.covidgenomics.com --private --region eu-west-1 --dist-path dist
+	poetry run publish
 
 documentation:
 	rm -rf pydoc-markdown.yml > /dev/null 2> /dev/null
