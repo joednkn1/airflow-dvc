@@ -143,7 +143,7 @@ This is specially useful when you have a workflow that uses [S3Hook](https://air
 
 ```python
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from datetime import datetime, timedelta
 
@@ -233,7 +233,7 @@ with DAG('intermediary_data_storage_dag',
 Instead of passing list as a files parameter you can pass function as would do in case of PythonOperator:
 ```python
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from datetime import datetime, timedelta
 

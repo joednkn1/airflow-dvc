@@ -11,7 +11,8 @@ poetry run airflow users create \
     --firstname Peter \
     --lastname Parker \
     --role Admin \
-    --email spiderman@superhero.org
+    --email spiderman@superhero.org \
+    --password admin
 
 poetry run airflow webserver --port 8080 &
 poetry run  airflow scheduler &
