@@ -1,22 +1,20 @@
 # Airflow DVC (1.9.9) [![Sponsor project](https://user-images.githubusercontent.com/4967343/89290185-5e893700-d650-11ea-8942-4579b2c96c2c.png)](https://github.com/sponsors/styczynski)
 
-[![Build and test](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml/badge.svg)](https://github.com/covid-genomics/airflow-dvc/actions/workflows/ci.yml)
+[![Build and test](https://github.com/styczynski/airflow-dvc/actions/workflows/ci.yml/badge.svg)](https://github.com/styczynski/airflow-dvc/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/airflow-dvc?style=flat-square)](https://pypi.org/project/airflow-dvc/)
-[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/covid-genomics/airflow-dvc?style=flat-square)](https://github.com/covid-genomics/airflow-dvc/commits/master)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/styczynski/airflow-dvc?style=flat-square)](https://github.com/styczynski/airflow-dvc/commits/master)
 
-[![Airflow image](https://covidgenomics.com/images/blogs/airflow_dvc/blog_image.png)](https://covidgenomics.com/blog/airflow_dvc/)
+## What is it?
+
+This package was developed by [@styczynski](https://github.com/styczynski/).
+<br/>**I am founder of biotech startup [Deepflare](https://deepflare.ai) and this project was created when I was co-founding the company to provide contributions to the public domain.**
 
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
-The basic tutorial about DVC and Airflow can be found on [Covid Genomics website in the News section here](https://covidgenomics.com/blog/airflow_dvc/).
+The basic tutorial about DVC and Airflow can be found on [Deepflare website in the News section here](https://deepflare.ai/blog/airflow_dvc/).
 The motivation for such a package was to create modern automated data science pipelines that operates on versioned data.
 
-This package is a Covid Genomics contribution to the opensource community.
-We try to fight the SARS-Cov-2 pandemic and develop tools to support biotech industry in this fight at the same time
-we care about sharing our knowledge wherever it's possible.
-
-You can feel invited to contribute to the project and other opensource code
-we distribute.
+You can feel invited to contribute and message me personally, also have a nice day!
 
 ## Installation
 
@@ -34,11 +32,11 @@ Or if you are using [Poetry](https://python-poetry.org/) to run Apache Airflow:
 ## What this package provides?
 
 The package provides the following core features:
-* 📊 [DVC Operator view](https://github.com/covid-genomics/airflow-dvc#-dvc-operator-view) (tab to browse all configured DVC operators)
-* 💾 [DVCUpdateOperator](https://github.com/covid-genomics/airflow-dvc#-dvcupdateoperator-uploading) (for uploading data to DVC)
-* ⬇️ [DVCDownloadOperator](https://github.com/covid-genomics/airflow-dvc#%EF%B8%8F-dvcdownloadoperator-downloading) (for downloading data from DVC)
-* 👀 [DVCUpdateSensor](https://github.com/covid-genomics/airflow-dvc#-dvcupdatesensor) (for waiting for a file modification on DVC)
-* 🤖 [DVCHook](https://github.com/covid-genomics/airflow-dvc#-dvchook) (high-level client for DVC)
+* 📊 [DVC Operator view](https://github.com/styczynski/airflow-dvc#-dvc-operator-view) (tab to browse all configured DVC operators)
+* 💾 [DVCUpdateOperator](https://github.com/styczynski/airflow-dvc#-dvcupdateoperator-uploading) (for uploading data to DVC)
+* ⬇️ [DVCDownloadOperator](https://github.com/styczynski/airflow-dvc#%EF%B8%8F-dvcdownloadoperator-downloading) (for downloading data from DVC)
+* 👀 [DVCUpdateSensor](https://github.com/styczynski/airflow-dvc#-dvcupdatesensor) (for waiting for a file modification on DVC)
+* 🤖 [DVCHook](https://github.com/styczynski/airflow-dvc#-dvchook) (high-level client for DVC)
 
 ## Run examples yourself
 
@@ -83,15 +81,15 @@ Please do the following to setup quick Airflow demo:
 
 After installation, you should be able to access `Browse > DVC Operators` option in the Airflow menu.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen2.png?raw=true" width="400px"/>
+<img src="https://github.com/styczynski/airflow-dvc/blob/master/static/screen2.png?raw=true" width="400px"/>
 
 The `DVC Operators` view allows you to display all configured DVC operators and repositories that they will push the files to/pull from.
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen1.png?raw=true" width="800px"/>
+<img src="https://github.com/styczynski/airflow-dvc/blob/master/static/screen1.png?raw=true" width="800px"/>
 
 The `DVC Pushes` view allows you to display all commits created by the DVC operators among all repositories:
 
-<img src="https://github.com/covid-genomics/airflow-dvc/blob/master/static/screen3.png?raw=true" width="800px"/>
+<img src="https://github.com/styczynski/airflow-dvc/blob/master/static/screen3.png?raw=true" width="800px"/>
 
 
 ### 💾 DVCUpdateOperator (Uploading)
@@ -159,7 +157,7 @@ state = 'wa'
 date = '{{ yesterday_ds_nodash }}'
 
 def upload_to_s3(state, date):
-    '''Grabs data from Covid endpoint and saves to flat file on S3
+    '''Grabs data from Covid tracking endpoint and saves to flat file on S3
     '''
     # Connect to S3
     s3_hook = S3Hook(aws_conn_id=s3_conn_id)
