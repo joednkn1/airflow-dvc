@@ -7,7 +7,6 @@
 ## What is it?
 
 This package was developed by [@styczynski](https://github.com/styczynski/).
-<br/>**I am founder of biotech startup [Deepflare](https://deepflare.ai) and this project was created when I was co-founding the company to provide contributions to the public domain.**
 
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
