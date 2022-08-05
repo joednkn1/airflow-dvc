@@ -6,14 +6,10 @@
 
 ## What is it?
 
-This package was developed by [@styczynski](https://github.com/styczynski/).
-
 This is an [Airflow](https://airflow.apache.org/) extension that adds support for [DVC](https://dvc.org/doc) operations.
 
 The basic tutorial about DVC and Airflow can be found on [Deepflare website in the News section here](https://deepflare.ai/blog/airflow_dvc/).
 The motivation for such a package was to create modern automated data science pipelines that operates on versioned data.
-
-You can feel invited to contribute and message me personally, also have a nice day!
 
 ## Installation
 
